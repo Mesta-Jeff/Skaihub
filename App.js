@@ -237,3 +237,4 @@ const styles = StyleSheet.create({
 // npx expo install expo-barcode-scanner
 // npx expo install expo-camera
 
+// news
