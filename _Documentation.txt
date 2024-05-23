@@ -1,0 +1,572 @@
+
+
+import React from 'react';
+import { StyleSheet, Text, View, Button } from 'react-native';
+
+export default function landing({ navigation }) {
+  return (
+    <View style={styles.container}>
+      <Text style={styles.labelStyle}>This is the Landing Page</Text>
+      <Button title="Go to login" onPress={() => navigation.navigate('Login')}/>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  labelStyle: {
+    marginBottom: 20,
+    fontWeight: 'bold',
+    fontSize: 18,
+  },
+});
+
+
+
+
+COlours
+#008080
+
+
+#00534C
+#007F6F
+#005150
+#007F6F
+#032322
+#002645
+#00C48D
+
+
+// Landing
+#493d8a
+
+
+
+
+
+
+
+
+iimport React, { useRef, useState } from 'react';
+import { StyleSheet, Text, View, SafeAreaView, StatusBar, FlatList, Animated } from 'react-native';
+import { RefreshControl } from 'react-native';
+
+import NotificationCard from '../components/DashboardCardView';
+import persons from '../model/DashboardData';
+
+export default function Dashboard({ navigation }) {
+  const myItemSeparator = () => {
+    return <View style={{ height: 1, backgroundColor: "silver", marginHorizontal: 10 }} />;
+  };
+
+  const myListEmpty = () => {
+    return (
+      <View style={{ alignItems: "center" }}>
+        <Text style={styles.item}>No data found</Text>
+      </View>
+    );
+  };
+
+  const [data, setData] = useState(persons.slice(0, 2));
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onEndReached = () => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setData(persons);
+      setRefreshing(false);
+    }, 1000);
+  };
+
+  const scrollY = useRef(new Animated.Value(0)).current;
+
+  const translateY = scrollY.interpolate({
+    inputRange: [0, 100],
+    outputRange: [0, -100],
+    extrapolate: 'clamp',
+  });
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <StatusBar style="auto" />
+      <Text style={styles.labelStyle} allowFontScaling={false}>Welcome the Dashboard</Text>
+
+      <Animated.View style={{ transform: [{ translateY }] }}>
+        <Text style={{ fontSize: 30, textAlign: "center", marginTop: 20, fontWeight: 'bold' }}>
+          Heading will be here
+        </Text>
+      </Animated.View>
+
+      <FlatList
+        data={data}
+        renderItem={NotificationCard}
+        keyExtractor={(item) => item.id}
+        ItemSeparatorComponent={myItemSeparator}
+        ListEmptyComponent={myListEmpty}
+        ListFooterComponent={() => (
+          <Text style={{ fontSize: 30, textAlign: "center", marginBottom: 20, fontWeight: 'bold' }}>The End</Text>
+        )}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={() => {}} />
+        }
+        onEndReachedThreshold={0.1}
+        onEndReached={onEndReached}
+      />
+
+    </SafeAreaView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+  },
+  labelStyle: {
+    marginBottom: 20,
+    fontWeight: 'bold',
+    fontSize: 18,
+  },
+});
+
+
+
+
+
+
+
+import React from 'react';
+import { StyleSheet, View, Text, Button,Dimensions, useWindowDimensions, SafeAreaView,TouchableOpacity } from 'react-native';
+import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { LinearGradient } from 'expo-linear-gradient';
+import Carousel from 'react-native-reanimated-carousel';
+
+
+import NotificationCard from '../components/DashboardCardView';
+import persons from '../model/DashboardData';
+
+
+const renderTabBar = props => (
+  <TabBar
+    {...props}
+    indicatorStyle={{ backgroundColor: '#008080' }}
+    style={{ backgroundColor: 'white', shadowColor: 'silver' }}
+    labelStyle={{ color: '#008080', fontSize: 12, fontWeight: 'bold' }}
+  />
+);
+
+export default function Events({ navigation }) {
+  const layout = useWindowDimensions();
+  const width = Dimensions.get('window').width;
+
+  const renderScene = SceneMap({
+    first: () => (
+      <View style={{ flex: 1, backgroundColor: 'white', alignItems: 'center', justifyContent: 'center'}}>
+
+        <View style={{ flex: 1 }}>
+            <Carousel
+                loop
+                width={width}
+                height={width * 1}
+                autoPlay={true}
+                // vertical={true}
+                mode='parallax'
+                data={[...new Array(6).keys()]}
+                scrollAnimationDuration={1000}
+                // onSnapToItem={(index) => console.log('current index:', index)}
+                renderItem={({ index }) => (
+                    <View
+                        style={{
+                            flex: 1,
+                            borderWidth: 1,
+                            justifyContent: 'center',
+                        }}
+                    >
+                        <Text style={{ textAlign: 'center', fontSize: 30 }}>
+                            {index}
+                        </Text>
+                    </View>
+                )}
+            />
+        </View>
+      </View>
+    ),
+    second: () => (
+      <View style={{ flex: 1, backgroundColor: 'white', alignItems: 'center', justifyContent: 'center' }}>
+        <Text>This is the Second View</Text>
+        {/* Inner tabs here */}
+      </View>
+    ),
+  });
+
+  const [index, setIndex] = React.useState(0);
+  const [routes, setRoutes] = React.useState([
+    { key: 'first', title: 'Grid Events' },
+    { key: 'second', title: 'List Events' },
+  ]);
+
+  const handleIndexChange = newIndex => {
+    if (newIndex === 0) {
+      setRoutes([
+        { key: 'first', title: 'Showing Events in Grid' },
+        { key: 'second', title: 'List Events' },
+      ]);
+    } else if (newIndex === 1) {
+      setRoutes([
+        { key: 'first', title: 'Grid Events' },
+        { key: 'second', title: 'Showing Events in List' },
+      ]);
+    }
+    setIndex(newIndex);
+  };
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <View style={styles.headerView}>
+        <LinearGradient
+          colors={['#008080', '#004040']}
+          start={[0, 0]}
+          end={[0, 1]}
+          style={styles.headerGradient}
+        >
+          <Text style={styles.headerText}>Current Events</Text>
+          <Text style={{ fontSize: 11, alignItems: 'center', color: 'azure', textAlign: 'center', marginHorizontal: 35 }}>
+            These contains list of events that will happen in the next days, weeks and even months to come
+          </Text>
+        </LinearGradient>
+      </View>
+
+      <TabView
+        renderTabBar={renderTabBar}
+        navigationState={{ index, routes }}
+        renderScene={renderScene}
+        onIndexChange={handleIndexChange}
+        initialLayout={{ width: layout.width }}
+      />
+
+      <TouchableOpacity
+        style={styles.skipStyles}
+        onPress={() => navigation.navigate('PastEvents')}>
+        <FontAwesome style={styles.icos} name="briefcase"  />
+      </TouchableOpacity>
+
+    </SafeAreaView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    justifyContent: 'center',
+  },
+  headerText: {
+    fontSize: 30,
+    fontWeight: 'bold',
+    color: 'white',
+  },
+  headerView: {
+    backgroundColor: '#008080',
+    alignItems: 'stretch',
+    height: 200,
+    justifyContent: 'center',
+  },
+  headerGradient: {
+    alignItems: 'center',
+    height: '100%',
+    justifyContent: 'center',
+  },
+
+  skipStyles: {
+    backgroundColor: '#008080',
+    borderColor: 'azure',
+    borderWidth: 2,
+    borderRadius: 50,
+    opacity: 0.9,
+    height: 60,
+    width:60,
+    position: 'absolute',
+    bottom: 0,
+    right: 20,
+    marginBottom: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 2,
+      height: 5,
+    },
+    shadowOpacity: 0.29,
+    shadowRadius: 4.65,
+    elevation: 0.8,
+  },
+
+  icos: {
+    color: 'white',
+    fontSize: 20,
+  }
+
+});
+
+
+
+
+
+
+{/* <View
+    style={{
+        borderBottomColor: 'black',
+        borderBottomWidth: StyleSheet.hairlineWidth,
+    }}
+/> */}
+
+
+
+
+
+
+
+import React from 'react';
+import { StyleSheet, Text, View, Button, TouchableOpacity } from 'react-native';
+import PagerView from 'react-native-pager-view';
+import { LinearGradient } from 'expo-linear-gradient';
+import { StatusBar } from 'expo-status-bar';
+
+
+export default function Landing({ navigation }) {
+  return (
+    <View style={styles.container}>
+      
+      <StatusBar style="auto" />
+
+      <PagerView 
+        style={styles.container}
+        initialPage={0} 
+        orientation={'horizontal'} >
+
+
+        <LinearGradient  colors={['#15f8b6',  '#276250' ]}  style={styles.page1} key='1'>
+        <Text style={styles.defaultText}> First page{'\n'} Swipe ➡️ </Text>
+        </LinearGradient>
+        
+
+        <LinearGradient  colors={['#276250',  '#15f8b6' ]}  style={styles.page2} key='2'>
+        <Text style={styles.defaultText}> Second page</Text>
+        </LinearGradient>
+        
+        <LinearGradient  colors={['#f85715',  '#c11732' ]}  style={styles.page3} key='3'>
+        <Text>Third page</Text>
+
+          <TouchableOpacity
+            style={styles.buttonStyles}
+            onPress={() => navigation.navigate('Entrance')}>
+            <Text style={styles.buttonText}>Continue</Text>
+          </TouchableOpacity>
+        </LinearGradient>
+
+      </PagerView>
+
+      <TouchableOpacity
+        style={styles.skipStyles}
+        onPress={() => navigation.navigate('Entrance')}>
+        <Text style={styles.skipbuttonText}>Skip</Text>
+      </TouchableOpacity>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+
+  buttonStyles: {
+    backgroundColor: '#008080',
+    borderColor: '#fff',
+    borderWidth: 2,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 20,
+    opacity: 0.9,
+    height: 40,
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    margin: 30,
+  },
+
+  skipStyles: {
+    backgroundColor: '#fff',
+    borderColor: '#008080',
+    borderWidth: 2,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 20,
+    opacity: 0.9,
+    height: 40,
+    position: 'absolute',
+    bottom: 0,
+    right: 70,
+    margin: 30,
+  },
+
+  skipbuttonText: {
+    color: '#008080',
+    fontSize: 11,
+    fontWeight: 'bold',
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 11,
+    fontWeight: 'bold',
+  },
+ 
+  page1: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'tomato',
+  },
+  page2: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'teal'
+  },
+  page3: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'pink'
+  },
+  defaultText: {
+    color: 'white',
+  }
+});
+
+
+
+
+
+
+
+
+
+import React from 'react';
+import { StyleSheet, Text, View, Button, TouchableOpacity } from 'react-native';
+import PagerView from 'react-native-pager-view';
+import { LinearGradient } from 'expo-linear-gradient';
+import { StatusBar } from 'expo-status-bar';
+
+
+export default function Landing({ navigation }) {
+  return (
+    <View style={styles.container}>
+      
+      <StatusBar style="auto" />
+
+      <PagerView 
+        style={styles.container}
+        initialPage={0} 
+        orientation={'horizontal'} >
+
+
+        <LinearGradient  colors={['#15f8b6',  '#276250' ]}  style={styles.page1} key='1'>
+        <Text style={styles.defaultText}> First page{'\n'} Swipe ➡️ </Text>
+        </LinearGradient>
+        
+
+        <LinearGradient  colors={['#276250',  '#15f8b6' ]}  style={styles.page2} key='2'>
+        <Text style={styles.defaultText}> Second page</Text>
+        </LinearGradient>
+        
+        <LinearGradient  colors={['#f85715',  '#c11732' ]}  style={styles.page3} key='3'>
+        <Text>Third page</Text>
+
+          <TouchableOpacity
+            style={styles.buttonStyles}
+            onPress={() => navigation.navigate('Entrance')}>
+            <Text style={styles.buttonText}>Continue</Text>
+          </TouchableOpacity>
+        </LinearGradient>
+
+      </PagerView>
+
+      <TouchableOpacity
+        style={styles.skipStyles}
+        onPress={() => navigation.navigate('Entrance')}>
+        <Text style={styles.skipbuttonText}>Skip</Text>
+      </TouchableOpacity>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+
+  buttonStyles: {
+    backgroundColor: '#008080',
+    borderColor: '#fff',
+    borderWidth: 2,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 20,
+    opacity: 0.9,
+    height: 40,
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    margin: 30,
+  },
+
+  skipStyles: {
+    backgroundColor: '#fff',
+    borderColor: '#008080',
+    borderWidth: 2,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 20,
+    opacity: 0.9,
+    height: 40,
+    position: 'absolute',
+    bottom: 0,
+    right: 70,
+    margin: 30,
+  },
+
+  skipbuttonText: {
+    color: '#008080',
+    fontSize: 11,
+    fontWeight: 'bold',
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 11,
+    fontWeight: 'bold',
+  },
+ 
+  page1: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'tomato',
+  },
+  page2: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'teal'
+  },
+  page3: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'pink'
+  },
+  defaultText: {
+    color: 'white',
+  }
+});
