@@ -1,62 +1,60 @@
-
 import React from 'react';
-import { SafeAreaView, StyleSheet, Text, View, TouchableOpacity, StatusBar } from 'react-native';
+import { SafeAreaView, StyleSheet, Text, View, TouchableOpacity, ScrollView } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import CarouselCards from '../components/EntranceCarouselCards'
+import CarouselCards from '../components/EntranceCarouselCards';
 
 import Colors from '../constants/Colors';
+import { APP_NAME } from '../constants/Var';
+import { ITEM_WIDTH } from './Login';
 
 export default function Entrance({ navigation }) {
   return (
-
     <SafeAreaView style={styles.container}>
+      <ScrollView contentContainerStyle={{ flexGrow: 1 ,width:ITEM_WIDTH}}>
       <View style={styles.flatContainersWrapper}>
         <View style={styles.flatcontainer1}>
           <CarouselCards />
         </View>
 
-        <View style={{ justifyContent: 'flex-start', marginBottom: 10 }}>
-          <Text allowFontScaling={false} style={styles.headerText}>Welcome to SkaiMount Event Hub</Text>
+        <View style={styles.textContainer}>
+          <Text allowFontScaling={false} style={styles.headerText}>Welcome to {APP_NAME}</Text>
+        </View>
 
-          <View style={[styles.flatcontainer, styles.marginVertical, styles.gridContainer]}>
-            <Text allowFontScaling={false} style={styles.callText}>Do you want to: </Text>
+        <View style={[styles.flatcontainer, styles.marginVertical, styles.gridContainer]}>
+          <Text allowFontScaling={false} style={styles.callText}>Do you want to:</Text>
 
-            <View style={styles.gridRow}>
-              {/* First row */}
-              <TouchableOpacity style={[styles.gridItem, styles.rightColor]} onPress={() => navigation.navigate('Login')}>
-                <FontAwesome style={styles.icos} size={28} name="usb" />
-                <Text allowFontScaling={false} style={styles.skipbuttonText}>Connect to Explore</Text>
-              </TouchableOpacity>
+          <View style={styles.gridRow}>
+            {/* First row */}
+            <TouchableOpacity style={[styles.gridItem, styles.rightColor]} onPress={() => navigation.navigate('Login')}>
+              <FontAwesome style={styles.icos} size={28} name="usb" />
+              <Text allowFontScaling={false} style={styles.skipbuttonText}>Connect to Explore</Text>
+            </TouchableOpacity>
 
-              <TouchableOpacity style={[styles.gridItem, styles.leftColor]} onPress={() => navigation.navigate('Login')}>
-                <FontAwesome style={styles.icos} size={28} name="calendar" />
-                <Text allowFontScaling={false} style={styles.skipbuttonText}>LIve Events</Text>
-              </TouchableOpacity>
-            </View>
+            <TouchableOpacity style={[styles.gridItem, styles.leftColor]} onPress={() => navigation.navigate('Login')}>
+              <FontAwesome style={styles.icos} size={28} name="calendar" />
+              <Text allowFontScaling={false} style={styles.skipbuttonText}>Live Events</Text>
+            </TouchableOpacity>
+          </View>
 
-            {/* <View style={styles.verticalLine} /> */}
+          <View style={styles.gridRow}>
+            {/* Second row */}
+            <TouchableOpacity style={[styles.gridItem, styles.rightColor]} onPress={() => navigation.navigate('Home')}>
+              <FontAwesome style={styles.icos} size={28} name="ticket" />
+              <Text allowFontScaling={false} style={styles.skipbuttonText}>Buy A Ticket</Text>
+            </TouchableOpacity>
 
-            <View style={styles.gridRow}>
-              {/* Second row */}
-              <TouchableOpacity style={[styles.gridItem, styles.rightColor]} onPress={() => navigation.navigate('Home')}>
-                <FontAwesome style={styles.icos} size={28} name="ticket" />
-                <Text allowFontScaling={false} style={styles.skipbuttonText}>Buy A Ticket</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity style={[styles.gridItem, styles.leftColor]} onPress={() => navigation.navigate('Login')}>
-                <FontAwesome style={styles.icos} size={28} name="folder-open" />
-                <Text allowFontScaling={false} style={styles.skipbuttonText}>Create an Event</Text>
-              </TouchableOpacity>
-            </View>
+            <TouchableOpacity style={[styles.gridItem, styles.leftColor]} onPress={() => navigation.navigate('Login')}>
+              <FontAwesome style={styles.icos} size={28} name="folder-open" />
+              <Text allowFontScaling={false} style={styles.skipbuttonText}>Create an Event</Text>
+            </TouchableOpacity>
           </View>
         </View>
 
-
       </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
-
 
 const styles = StyleSheet.create({
   container: {
@@ -68,23 +66,33 @@ const styles = StyleSheet.create({
 
   flatContainersWrapper: {
     flex: 1,
-    flexDirection: 'column',
     width: '100%',
     alignItems: 'center',
-    justifyContent: 'flex-start'
+    justifyContent: 'space-between',
+    // backgroundColor:'red'
   },
 
   flatcontainer1: {
-    flex: 1,
+    flex: 0.2,
     alignItems: 'center',
-    justifyContent: 'flex-start',
+    justifyContent: 'center',
+    // backgroundColor: 'red'
   },
+
+  textContainer: {
+    flex: 0.1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: -10,
+  },
+
   flatcontainer: {
     backgroundColor: Colors.defaultColor,
     width: '90%',
     alignItems: 'center',
     borderRadius: 15,
     paddingVertical: 20,
+    marginBottom: 90,
   },
 
   marginVertical: {
@@ -113,22 +121,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 
-  marginVertical: {
-    marginVertical: 20,
-  },
-
   headerText: {
-    fontSize: 22,
-    fontStyle: 'normal',
-    fontWeight: '900',
-    color: Colors.defaultColor
+    fontSize: 24,
+    color: Colors.defaultColor,
+    fontFamily: 'PoppinsBlack'
   },
 
   callText: {
     color: Colors.defaultWhite,
     textAlign: 'left',
-    marginLeft: -180,
-    fontSize: 16
+    fontSize: 16,
   },
 
   skipbuttonText: {
@@ -138,22 +140,16 @@ const styles = StyleSheet.create({
   },
 
   icos: {
-    color: Colors.defaultWhite
+    color: Colors.defaultWhite,
   },
 
   rightColor: {
     borderRightColor: Colors.defaultWhite,
-    borderRightWidth: 2
+    borderRightWidth: 2,
   },
 
   leftColor: {
     borderLeftColor: Colors.defaultWhite,
-    borderLeftWidth: 2
-  }
-
+    borderLeftWidth: 2,
+  },
 });
-
-
-
-
-

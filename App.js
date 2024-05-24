@@ -5,9 +5,8 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { StyleSheet, View, Image, TouchableOpacity } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { StatusBar } from 'react-native';
-
 import Colors from './constants/Colors';
-
+import useCustomFonts from './src/fontFamily';
 
 // Importing screens
 import HomeScreen from './HomeScreen';
@@ -20,16 +19,26 @@ import AboutScreen from './screens/AboutUs';
 import DashboardNoticeDetailsScreen from './screens/DashboardNoticeDetails';
 import PastEventScreen from './screens/PastEvent';
 import EventDetailsScreen from './screens/EventDetails';
+import ResetPasswordScreen from './screens/ResetPassword';
+import CreateAccountScreen from './screens/CreateAccount';
 
 
 const Stack = createStackNavigator();
 
 export default function App() {
+
+  const [fontsLoaded] = useCustomFonts();
+
+  if (!fontsLoaded) {
+    return null;
+  }
+
   return (
     <SafeAreaProvider>
       <StatusBar barStyle={'auto'} />
 
       <NavigationContainer>
+
         <Stack.Navigator initialRouteName="Landing"
           screenOptions={({ navigation }) => ({
             headerStyle: {
@@ -71,7 +80,7 @@ export default function App() {
                 <TouchableOpacity onPress={() => { }}>
                   <Image
                     source={require('./assets/Main Logo.png')}
-                    style={{ width: 40, height: 40, marginLeft: 20, borderRadius: 50, borderWidth: 2, borderColor: Colors.defaultGhost  }}
+                    style={{ width: 40, height: 40, marginLeft: 20, borderRadius: 50, borderWidth: 2, borderColor: Colors.defaultGhost }}
                   />
                 </TouchableOpacity>
               ),
@@ -111,7 +120,7 @@ export default function App() {
             component={EventDetailsScreen}
             options={({ route }) => ({
               title: route.params.title,
-              headerShown: true,
+              headerShown: false,
               headerShadowVisible: false,
               headerTitleStyle: {
                 fontWeight: 'bold',
@@ -137,9 +146,9 @@ export default function App() {
               title: 'Ticket Verification',
               headerShown: true,
               headerShadowVisible: false,
-              
+
             }}
-            
+
           />
 
           <Stack.Screen
@@ -167,7 +176,47 @@ export default function App() {
               title: 'Authentication',
               cardShadowEnabled: false,
               headerShadowVisible: false,
-              headerShown: true,
+              headerShown: false,
+              // headerLeft: null,
+            }}
+          />
+
+          <Stack.Screen
+            name="ResetPassword"
+            component={ResetPasswordScreen}
+            options={{
+              headerLeft: () => (
+                <TouchableOpacity onPress={() => { }}>
+                  <Image
+                    source={require('./assets/Main Logo.png')}
+                    style={{ width: 40, height: 40, marginLeft: 20, borderRadius: 50, borderWidth: 2, borderColor: Colors.defaultGhost }}
+                  />
+                </TouchableOpacity>
+              ),
+              title: 'Reset Password',
+              cardShadowEnabled: false,
+              headerShadowVisible: false,
+              headerShown: false,
+              // headerLeft: null,
+            }}
+          />
+
+          <Stack.Screen
+            name="CreateAccount"
+            component={CreateAccountScreen}
+            options={{
+              headerLeft: () => (
+                <TouchableOpacity onPress={() => { }}>
+                  <Image
+                    source={require('./assets/Main Logo.png')}
+                    style={{ width: 40, height: 40, marginLeft: 20, borderRadius: 50, borderWidth: 2, borderColor: Colors.defaultGhost }}
+                  />
+                </TouchableOpacity>
+              ),
+              title: 'Create Account',
+              cardShadowEnabled: false,
+              headerShadowVisible: false,
+              headerShown: false,
               // headerLeft: null,
             }}
           />
@@ -237,4 +286,8 @@ const styles = StyleSheet.create({
 // npx expo install expo-barcode-scanner
 // npx expo install expo-camera
 
-// news
+// npm install @react-native-async-storage/async-storage
+
+// expo install @expo-google-fonts/spartan @expo-google-fonts/montserrat @expo-google-fonts/roboto @expo-google-fonts/open-sans @expo-google-fonts/poppins @expo-google-fonts/source-sans-3 @expo-google-fonts/barlow @expo-google-fonts/quicksand @expo-google-fonts/anton @expo-google-fonts/pacifico @expo-google-fonts/alata
+
+// npx expo install react-native-modal-datetime-picker @react-native-community/datetimepicker

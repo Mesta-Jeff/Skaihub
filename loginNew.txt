@@ -1,0 +1,196 @@
+import React, { useState } from 'react';
+import { StyleSheet, Text, TextInput, View, TouchableOpacity, ScrollView, Alert, Image,} from 'react-native';
+import { StatusBar } from 'expo-status-bar';
+
+import { BASE_URL } from '../constants/Var';
+import Colors from '../constants/Colors';
+
+export default function Login({ navigation })  {
+
+
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [imageSrc, setImageSrc] = useState('');
+
+
+  const loginUser = () => {
+    const url = `${BASE_URL}/authentication/login?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`;
+
+    return fetch(url, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+    })
+    .then((response) => response.json())
+    .then((responseJson) => {
+      setLoading(false);
+      if (responseJson.success) {
+        setImageSrc(responseJson.data.image);
+        const user = responseJson.data;
+        // Alert.alert(
+        //   'Success Alert',
+        //   `User found successfully. 
+        //   Name: ${user.name}
+        //   Email: ${user.email}
+        //   Phone: ${user.phone}
+        //   Image: ${user.image}
+        //   Role: ${user.role}
+        //   Token: ${user.token}
+        //   User Key: ${user.userKey}
+        //   API Key: ${user.apiKey}`,
+        //   [{ text: 'OK', onPress: () => navigation.push('Home') }]
+        // );
+      } else {
+        Alert.alert('Error Alert', responseJson.message || 'Failed to authenticate user');
+      }
+    })
+    .catch((error) => {
+      setLoading(false);
+      Alert.alert('Error', `An error occurred. Please try again. ${error}`);
+      console.error('Error:', error);
+    });
+  };
+
+  const handlePress = () => {
+    if (!email || !password) {
+      Alert.alert('Skai Alert', 'Sorry, an error has been found. All fields are required.');
+      return;
+    }
+
+    setLoading(true);
+    loginUser();
+  };
+  
+
+  return (
+    <View style={styles.container}>
+      <StatusBar style="auto" />
+
+      <ScrollView style={styles.scrollStyle}>
+        <View style={styles.innerContainer}>
+          <Text allowFontScaling={false} style={styles.headerText}>skaiHUB a product from SkaiMount</Text>
+          
+          <TextInput
+            style={styles.input}
+            placeholder="Enter email here"
+            value={email}
+            onChangeText={(text) => setEmail(text)}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Provide Password"
+            value={password}
+            onChangeText={(text) => setPassword(text)}
+          />
+
+          <TouchableOpacity
+            style={styles.buttonStyles}
+            onPress={handlePress}
+            disabled={loading}>
+            <Text allowFontScaling={false} style={styles.buttonText}>{loading ? 'Loading...' : 'Submit'}</Text>
+          </TouchableOpacity>
+
+          {
+            imageSrc && imageSrc !== 'null' ? (
+              <View style={styles.card}>
+                <Image source={{ uri: imageSrc }} style={styles.cardImage} />
+              </View>
+            ) : null
+          }
+
+        </View>
+      </ScrollView>
+    </View>
+  );
+}
+
+// Add your styles here...
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  innerContainer: {
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexGrow: 1,
+  },
+
+  pickers: {
+    fontSize: 16,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    borderWidth: 0.5,
+    borderColor: 'gray',
+    borderRadius: 8,
+    color: 'black',
+    paddingRight: 0,
+  },
+
+  scrollStyle: {
+    marginLeft: 15,
+    marginRight: 15,
+    marginTop: 20,
+    marginBottom: 10,
+    width: '100%',
+  },
+
+  input: {
+    height: 50,
+    width: '90%',
+    borderColor: 'gray',
+    borderWidth: 1,
+    marginBottom: 10,
+    paddingHorizontal: 10,
+    borderRadius: 10,
+  },
+
+  headerText: {
+    // fontWeight: 'bold',
+    color: Colors.defaultColor,
+    marginBottom: 20,
+    marginTop: 60,
+    fontSize: 24,
+    paddingHorizontal: 10,
+    textAlign: 'center',
+    fontFamily: 'PoppinsBlack',
+  },
+
+  buttonStyles: {
+    marginBottom: 20,
+    backgroundColor: '#fff',
+    borderColor: Colors.defaultColor,
+    borderWidth: 2,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 5,
+    opacity: 0.5,
+  },
+  buttonText: {
+    color: Colors.defaultColor,
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  card: {
+    marginTop: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 220,
+    height: 220,
+    borderColor: Colors.defaultColor,
+    borderWidth: 3,
+    borderRadius: 200
+  },
+  cardImage: {
+    width: 200,
+    height: 200,
+    resizeMode: 'cover',
+    borderRadius: 100
+  },
+});

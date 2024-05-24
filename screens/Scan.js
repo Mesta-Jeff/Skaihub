@@ -3,6 +3,8 @@ import { Text, View, StyleSheet, Dimensions, Button, StatusBar, TouchableOpacity
 import { CameraView, Camera } from "expo-camera/next";
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 
+import Colors from '../constants/Colors';
+
 export const SLIDER_WIDTH = Dimensions.get('window').width + 80;
 export const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 0.79);
 
@@ -78,7 +80,7 @@ export default function Scan({ navigation }) {
 
           <TouchableOpacity style={styles.scanButton} onPress={() => setScanned(false)}>
             <Text style={styles.scanText}>Rescan</Text>
-            <FontAwesome style={{ marginHorizontal: 10, color: '#008080' }} size={20} name="refresh" />
+            <FontAwesome style={{ marginHorizontal: 10, color: Colors.defaultColor }} size={20} name="refresh" />
           </TouchableOpacity>
 
         </View>
@@ -94,7 +96,7 @@ const styles = StyleSheet.create({
 
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: Colors.defaultWhite,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -103,7 +105,7 @@ const styles = StyleSheet.create({
     fontSize: 28,
     margin: 10,
     textAlign: 'center',
-    color: '#008080',
+    color: Colors.defaultColor,
   },
   headerBar: {
     flexDirection: 'row',
@@ -111,7 +113,7 @@ const styles = StyleSheet.create({
     height: 100,
     marginVertical: 15,
     borderRadius: 10,
-    borderColor: 'silver',
+    borderColor: Colors.defaultSilver,
     borderWidth: 2,
     justifyContent: 'space-evenly',
     alignItems: 'center',
@@ -123,7 +125,7 @@ const styles = StyleSheet.create({
     height: 100,
     marginVertical: 15,
     borderRadius: 10,
-    borderColor: '#008080',
+    borderColor: Colors.defaultColor,
     borderWidth: 2,
     overflow: 'hidden',
     justifyContent: 'space-evenly',
@@ -131,28 +133,28 @@ const styles = StyleSheet.create({
     borderStyle: 'dotted',
   },
   button: {
-    backgroundColor: '#008080',
+    backgroundColor: Colors.defaultColor,
     paddingHorizontal: 20,
     paddingVertical: 20,
     borderRadius: 5,
     flexDirection: 'row'
   },
   buttonText: {
-    color: 'white',
+    color: Colors.defaultWhite,
     fontSize: 16,
     fontWeight: 'bold',
   },
   scanButton: {
-    backgroundColor: 'white',
+    backgroundColor: Colors.defaultWhite,
     paddingHorizontal: 20,
     paddingVertical: 15,
     borderRadius: 5,
     flexDirection: 'row',
-    borderColor: '#008080',
+    borderColor: Colors.defaultColor,
     borderWidth: 2,
   },
   scanText: {
-    color: '#008080',
+    color: Colors.defaultColor,
     fontSize: 16,
     fontWeight: 'bold',
   },
@@ -165,14 +167,14 @@ const styles = StyleSheet.create({
     width: ITEM_WIDTH,
     height: 350,
     borderRadius: 10,
-    borderColor: '#008080',
+    borderColor: Colors.defaultColor,
     borderWidth: 2,
     overflow: 'hidden',
     justifyContent: 'center',
     borderStyle: 'dotted',
   },
   ico: {
-    color: 'white',
+    color: Colors.defaultWhite,
     fontSize: 20,
     alignItems: 'center',
     textAlign: 'center',
