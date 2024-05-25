@@ -20,7 +20,7 @@ const Colors = {
     defaultTransparent: 'rgba(0, 0, 0, 0)',
     middleTranspaerent: 'rgba(42, 27, 118, 0.8)',
 
-    defaultPinkTransparent: 'rgba(255, 192, 203, 0.5)',
+    defaultPinkTransparent: 'rgba(180, 170, 180, 0.8)',
     middleBlueTransparent: 'rgba(70, 130, 180, 0.7)', 
 
 

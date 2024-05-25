@@ -194,3 +194,11 @@ const styles = StyleSheet.create({
     borderRadius: 100
   },
 });
+
+
+
+{
+  role && imageSrc !== 'Private' ? (
+    <FontAwesome style={styles.icos} name="qrcode" onPress={() => navigation.navigate('Scans')} />
+  ) : null
+}

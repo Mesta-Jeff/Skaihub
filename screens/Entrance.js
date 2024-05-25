@@ -3,11 +3,14 @@ import { SafeAreaView, StyleSheet, Text, View, TouchableOpacity, ScrollView } fr
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import CarouselCards from '../components/EntranceCarouselCards';
 
+
 import Colors from '../constants/Colors';
 import { APP_NAME } from '../constants/Var';
 import { ITEM_WIDTH } from './Login';
 
 export default function Entrance({ navigation }) {
+
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={{ flexGrow: 1 ,width:ITEM_WIDTH}}>

@@ -1,26 +1,49 @@
 
-import React, { useEffect } from 'react';
-import { StyleSheet, SafeAreaView, TouchableOpacity} from 'react-native';
+import React, { useEffect, useState, useRef } from 'react';
+import { StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native';
 import Carousel, { Pagination } from 'react-native-snap-carousel';
+import { StatusBar } from 'expo-status-bar';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import Colors from '../constants/Colors';
 import slides from '../model/OnboargingData';
 import OnboardingItem, { SLIDER_WIDTH, ITEM_WIDTH } from '../components/OnboardingItem';
 
-import { StatusBar } from 'expo-status-bar';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
-
-
 export default function Landing({ navigation }) {
-  
-  const [index, setIndex] = React.useState(0);
-  const isCarousel = React.useRef(null);
+
+  const [userState, setUserState] = useState(null);
+  const [index, setIndex] = useState(0);
+  const isCarousel = useRef(null);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const userData = await AsyncStorage.getItem('user');
+        if (userData !== null) {
+          setUserState("Active");
+          // console.log(userData);
+        } else {
+          setUserState("Inactive");
+        }
+      } catch (error) {
+        console.error('Failed to retrieve user data:', error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
 
   const handleSnapToItem = (currentIndex) => {
     setIndex(currentIndex);
-    // if (currentIndex === slides.length - 1) {
-    //   navigation.navigate('Entrance');
-    // }
+  };
+
+  const handlePress = () => {
+    if (userState === "Active") {
+      navigation.navigate('Home');
+    } else {
+      navigation.navigate('Entrance');
+    }
   };
 
   return (
@@ -59,15 +82,13 @@ export default function Landing({ navigation }) {
       {(index === slides.length - 1) && (
         <TouchableOpacity
           style={styles.skipStyles}
-          onPress={() => navigation.navigate('Entrance')}>
+          onPress={handlePress}>
           <FontAwesome style={styles.icos} name="arrow-right" />
         </TouchableOpacity>
       )}
-
     </SafeAreaView>
   );
 }
-
 
 const styles = StyleSheet.create({
   container: {

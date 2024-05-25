@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect, useState} from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -26,6 +27,28 @@ import CreateAccountScreen from './screens/CreateAccount';
 const Stack = createStackNavigator();
 
 export default function App() {
+
+  const [userState, setUserState] = useState(null);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        // await AsyncStorage.removeItem('user');
+        const userData = await AsyncStorage.getItem('user');
+        if (userData !== null) {
+          setUserState("Active");
+          // console.log(userData);
+        } else {
+          setUserState("Inactive");
+        }
+      } catch (error) {
+        console.error('Failed to retrieve user data:', error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
 
   const [fontsLoaded] = useCustomFonts();
 
@@ -287,7 +310,11 @@ const styles = StyleSheet.create({
 // npx expo install expo-camera
 
 // npm install @react-native-async-storage/async-storage
+// expo install @react-native-async-storage/async-storage@1.21.0
+
 
 // expo install @expo-google-fonts/spartan @expo-google-fonts/montserrat @expo-google-fonts/roboto @expo-google-fonts/open-sans @expo-google-fonts/poppins @expo-google-fonts/source-sans-3 @expo-google-fonts/barlow @expo-google-fonts/quicksand @expo-google-fonts/anton @expo-google-fonts/pacifico @expo-google-fonts/alata
 
 // npx expo install react-native-modal-datetime-picker @react-native-community/datetimepicker
+
+// expo install expo-image-picker expo-file-system
