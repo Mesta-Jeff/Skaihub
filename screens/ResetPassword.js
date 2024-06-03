@@ -1,5 +1,6 @@
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StyleSheet, Text, TextInput, View, TouchableOpacity, Alert, Dimensions, KeyboardAvoidingView, Platform } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -13,9 +14,48 @@ export const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 0.78);
 
 export default function ResetPassword({ navigation }) {
 
-
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
+
+
+  const [userData, setUserData] = useState({ api_token: null, user_key: null, api_key: null, token: null });
+  const [events, setEvents] = useState([]);
+
+  // const handlePress = async () => {
+  //   try {
+  //     setLoading(true);
+  
+  //     const userData = await AsyncStorage.getItem('user');
+  //     if (userData !== null) {
+  //       const user = JSON.parse(userData);
+  
+  //       const url = `${BASE_URL}/events/mobile`;
+  
+  //       const response = await fetch(url, {
+  //         method: 'GET',
+  //         headers: {
+  //           'Accept': 'application/json',
+  //           'Content-Type': 'application/json',
+  //           'Authorization': `Bearer ${user.token}`,
+  //           'ApiKey': user.api_key,
+  //           'ApiToken': user.api_token,
+  //           'UserKey': user.user_key,
+  //         },
+  //       });
+  
+  //       const data = await response.json();
+  //       console.log('Fetched data:', data);
+  //       setEvents(data);
+  //       setLoading(false);
+  //     }
+  //     console.log('Events:', events); 
+  //   } catch (error) {
+  //     console.error('Error fetching data:', error);
+  //     setLoading(false);
+  //     Alert.alert('Error', 'Failed to fetch data. Please try again.');
+  //   }
+  // };
+  
 
   const handlePress = () => {
     if (!email) {

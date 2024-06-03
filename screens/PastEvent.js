@@ -1,15 +1,20 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useState, useRef, } from 'react';
 import { StyleSheet, View, Text, Dimensions, useWindowDimensions, SafeAreaView, TouchableOpacity,} from 'react-native';
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { LinearGradient } from 'expo-linear-gradient';
 import Carousel from 'react-native-reanimated-carousel';
+import { BASE_URL } from '../constants/Var';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Colors from '../constants/Colors';
+import InnerLoad from '../components/InnerLoad.js'
+import Loader from '../components/Loader';
+import { StatusBar } from 'expo-status-bar';
 
 // Calling components and data models
 import EventGridTemplate from '../components/EventGridCard';
 import EventListTemplate from '../components/EventListCard';
-import dataModel from '../model/EventData.js'
+
 
 const renderTabBar = props => (
   <TabBar
@@ -25,8 +30,55 @@ export default function PastEvents({ navigation }) {
   const layout = useWindowDimensions();
   const width = Dimensions.get('window').width;
 
+  const [eventsData, setEventsData] = useState([]);
+  const [innerloading, setInnerLoading] = useState(false);
+  const [pageloading, setPageLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const userData = await AsyncStorage.getItem('user');
+      const { token, api_key, api_token, user_key } = JSON.parse(userData);
+
+      const url = `${BASE_URL}/events/mobile?query_type=Yes`;
+      setInnerLoading(true);
+  
+      try {
+
+        const response = await fetch(url, {
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+            'ApiKey': api_key,
+            'ApiToken': api_token,
+            'UserKey': user_key,
+          },
+        });
+
+        const responseData = await response.json();
+        const data = responseData.data;
+
+        if (Array.isArray(data)) {
+          setEventsData(data);
+        } else {
+          console.error('API response data is not an array:', data);
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }finally {
+        setInnerLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+
   const handlePress = (title, id) => {
+    setPageLoading(true)
     navigation.navigate('EventDetails', { title, id });
+    setPageLoading(false);
   };
 
 
@@ -34,45 +86,65 @@ export default function PastEvents({ navigation }) {
     
     first: () => (
       <View style={{ flex: 1, backgroundColor: Colors.defaultWhite, alignItems: 'center', justifyContent: 'center' }}>
-        <View style={{ flex: 1, alignItems: 'center',}}>
-          <Carousel
-            loop
-            width={width}
-            // height={width * 1}
-            height={480}
-            // vertical={true}
-            autoPlay={true}
-            mode='parallax'
-            data={dataModel}
-            scrollAnimationDuration={2000}
-            renderItem={({ item }) => (
-              <EventGridTemplate item={item} onPress={handlePress} />
-            )}
-          />
-          <Text style={{fontWeight: 'bold', color: 'grey'}}>Currently Viewing</Text>
-          <Text id='txtTitle' style={styles.titleText}>...</Text>
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+          {innerloading ? (
+            <InnerLoad loading={innerloading} />
+          ) : (
+            <>
+              {eventsData && eventsData.length > 0 ? (
+                <Carousel
+                  loop
+                  width={width}
+                  height={480}
+                  // vertical={true}
+                  autoPlay={true}
+                  mode='parallax'
+                  data={eventsData}
+                  scrollAnimationDuration={4000}
+                  renderItem={({ item }) => (
+                    <EventGridTemplate item={item} onPress={handlePress} />
+                  )}
+                />
+              ) : (
+                <Text style={{ fontStyle: 'italic', fontSize: 18 }} allowFontScaling={false}>No record to display</Text>
+              )}
+            </>
+          )}
         </View>
       </View>
     ),
     
     second: () => (
-      <View style={{ flex: 1, backgroundColor: Colors.defaultWhite, alignItems: 'center', }}>
-        <Carousel
-            loop
-            width={width}
-            height={200}
-            vertical={true}
-            autoPlay={true}
-            mode='parallax'
-            data={dataModel}
-            scrollAnimationDuration={2000}
-            renderItem={({ item }) => (
-              <EventListTemplate item={item} onPress={handlePress} />
-            )}
-            style={{height: 550, marginVertical: 10}}
-          />
+      <View style={{ flex: 1, backgroundColor: Colors.defaultWhite, alignItems: 'center', justifyContent: 'center' }}>
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', marginTop: 10 }}>
+          {innerloading ? (
+            <InnerLoad loading={innerloading} />
+          ) : (
+            <>
+              {eventsData && eventsData.length > 0 ? (
+                <Carousel
+                  loop
+                  width={width}
+                  height={200}
+                  vertical={true}
+                  autoPlay={true}
+                  mode="parallax"
+                  data={eventsData}
+                  scrollAnimationDuration={4000}
+                  renderItem={({ item }) => (
+                    <EventListTemplate item={item} onPress={handlePress} />
+                  )}
+                  style={{ height: 550, marginVertical: 10 }}
+                />
+              ) : (
+                <Text style={{ fontStyle: 'italic', fontSize: 18 }} allowFontScaling={false}>No Record to display</Text>
+              )}
+            </>
+          )}
+        </View>
       </View>
     ),
+
   });
 
   const [index, setIndex] = React.useState(0);
@@ -98,16 +170,18 @@ export default function PastEvents({ navigation }) {
 
   return (
     <SafeAreaView style={styles.container}>
+
+      <Loader loading={pageloading} />
+      <StatusBar style="auto" />
+
       <View style={styles.headerView}>
         <LinearGradient
           colors={[Colors.defaultColor, Colors.defaultColorDark]}
-          start={[0, 0]}
-          end={[0, 1]}
-          style={styles.headerGradient}
+          start={[0, 0]} end={[0, 1]} style={styles.headerGradient}
         >
-          <Text style={styles.headerText}>Outdated Events</Text>
-          <Text style={{ fontSize: 11, alignItems: 'center', color: 'azure', textAlign: 'center', marginHorizontal: 35 }}>
-            These events can be due to cancellation, suspension or date past time
+          <Text style={styles.headerText}>Past Events</Text>
+          <Text style={{ fontSize: 12, alignItems: 'center', color: 'azure', textAlign: 'center', marginHorizontal: 35 }}>
+          You're currently viewing events that have either been canceled, suspended, or are past their scheduled date.
           </Text>
         </LinearGradient>
       </View>
@@ -172,7 +246,9 @@ const styles = StyleSheet.create({
 
   icos: {
     color: Colors.defaultWhite,
-    fontSize: 30,
+    fontSize: 40,
+    marginLeft: 20,
+    // marginBottom: 25
   }
 
 });

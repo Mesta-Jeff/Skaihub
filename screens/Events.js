@@ -1,17 +1,20 @@
-import React from 'react';
-import { StyleSheet, View, Text, Dimensions, useWindowDimensions, SafeAreaView, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, View, Text, Dimensions, useWindowDimensions, SafeAreaView, TouchableOpacity, Alert} from 'react-native';
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { LinearGradient } from 'expo-linear-gradient';
 import Carousel from 'react-native-reanimated-carousel';
-
+import { BASE_URL } from '../constants/Var';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Colors from '../constants/Colors';
+import InnerLoad from '../components/InnerLoad.js'
+import Loader from '../components/Loader';
+import { StatusBar } from 'expo-status-bar';
 
 
 // Calling components and data models
 import EventGridTemplate from '../components/EventGridCard';
 import EventListTemplate from '../components/EventListCard';
-import dataModel from '../model/EventData.js'
 
 
 const renderTabBar = props => (
@@ -24,57 +27,143 @@ const renderTabBar = props => (
 );
 
 export default function Events({ navigation }) {
+  const [eventsData, setEventsData] = useState([]);
+  const [innerloading, setInnerLoading] = useState(false);
+  const [pageloading, setPageLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const userData = await AsyncStorage.getItem('user');
+      const { token, api_key, api_token, user_key } = JSON.parse(userData);
+
+      const url = `${BASE_URL}/events/mobile?query_type=No`;
+      setInnerLoading(true);
+  
+      try {
+
+        const response = await fetch(url, {
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+            'ApiKey': api_key,
+            'ApiToken': api_token,
+            'UserKey': user_key,
+          },
+        });
+
+        const responseData = await response.json();
+        const data = responseData.data;
+
+        if (Array.isArray(data)) {
+          setEventsData(data);
+        } else {
+          console.error('API response data is not an array:', data);
+          Alert.alert('Request Failed', 'Check your internet connection, request for data failed');
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        Alert.alert('Request Failed', 'Check your internet connection, request for data failed');
+      }finally {
+        setInnerLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const layout = useWindowDimensions();
   const width = Dimensions.get('window').width;
 
 
-  const handlePress = (title, id) => {
-    navigation.navigate('EventDetails', { title, id });
+  const handlePress = async (title, id) => {
+    setPageLoading(true)
+    try {
+      await AsyncStorage.getItem('user');
+      navigation.navigate('EventDetails', { title, id });
+    } finally {
+      setPageLoading(false);
+    }
+
   };
+
+
+  const getPastevents = async () => 
+  {
+    setPageLoading(true);
+    try {
+      await AsyncStorage.getItem('user');
+      navigation.navigate('PastEvents');
+    } finally {
+      setPageLoading(false);
+    }
+  }
+
 
   const renderScene = SceneMap({
     
     first: () => (
       <View style={{ flex: 1, backgroundColor: Colors.defaultWhite, alignItems: 'center', justifyContent: 'center' }}>
-        <View style={{ flex: 1,}}>
-          <Carousel
-            loop
-            width={width}
-            height={500}
-            vertical={true}
-            autoPlay={true}
-            mode='parallax'
-            data={dataModel}
-            scrollAnimationDuration={2000}
-            // onSnapToItem={(index) => console.log('current index:', index)}
-            renderItem={({ item }) => (
-              <EventGridTemplate item={item} onPress={handlePress} />
-            )}
-          />
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+          {innerloading ? (
+            <InnerLoad loading={innerloading} />
+          ) : (
+            <>
+              {eventsData && eventsData.length > 0 ? (
+                <Carousel
+                  loop
+                  width={width}
+                  height={510}
+                  vertical={true}
+                  autoPlay={true}
+                  mode='parallax'
+                  data={eventsData}
+                  scrollAnimationDuration={4000}
+                  renderItem={({ item }) => (
+                    <EventGridTemplate item={item} onPress={handlePress} />
+                  )}
+                />
+              ) : (
+                <Text style={{ fontStyle: 'italic', fontSize: 18 }} allowFontScaling={false}>No record to display</Text>
+              )}
+            </>
+          )}
         </View>
       </View>
     ),
     
     second: () => (
-      <View style={{ flex: 1, backgroundColor: Colors.defaultWhite, alignItems: 'center', }}>
-        <Carousel
-            loop
-            width={width}
-            height={200}
-            vertical={true}
-            autoPlay={true}
-            mode='parallax'
-            data={dataModel}
-            scrollAnimationDuration={2000}
-            // onSnapToItem={(index) => console.log('current index:', index)}
-            renderItem={({ item }) => (
-              <EventListTemplate item={item} onPress={handlePress} />
-            )}
-            style={{height: 550, marginVertical: 10}}
-          />
+      <View style={{ flex: 1, backgroundColor: Colors.defaultWhite, alignItems: 'center', justifyContent: 'center' }}>
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', marginTop: 15 }}>
+          {innerloading ? (
+            <InnerLoad loading={innerloading} />
+          ) : (
+            <>
+              {eventsData && eventsData.length > 0 ? (
+                <Carousel
+                  loop
+                  width={width}
+                  height={200}
+                  vertical={true}
+                  autoPlay={true}
+                  mode="parallax"
+                  data={eventsData}
+                  scrollAnimationDuration={4000}
+                  renderItem={({ item }) => (
+                    <EventListTemplate item={item} onPress={handlePress} />
+                  )}
+                  style={{ height: 550, marginVertical: 10 }}
+                />
+              ) : (
+                <Text style={{ fontStyle: 'italic', fontSize: 18 }} allowFontScaling={false}>No Record to display</Text>
+              )}
+            </>
+          )}
+        </View>
       </View>
     ),
+    
   });
 
   const [index, setIndex] = React.useState(0);
@@ -84,6 +173,7 @@ export default function Events({ navigation }) {
   ]);
 
   const handleIndexChange = newIndex => {
+    // console.log("Ready data:" , eventsData);
     if (newIndex === 0) {
       setRoutes([
         { key: 'first', title: 'Showing Events in Grid' },
@@ -99,7 +189,10 @@ export default function Events({ navigation }) {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container}>  
+      <Loader loading={pageloading} />
+      <StatusBar style="auto" />
+
       <View style={styles.headerView}>
         <LinearGradient
           colors={[Colors.defaultColor, Colors.defaultColorDark]}
@@ -122,9 +215,7 @@ export default function Events({ navigation }) {
         initialLayout={{ width: layout.width }}
       />
 
-      <TouchableOpacity
-        style={styles.skipStyles}
-        onPress={() => navigation.navigate('PastEvents')}>
+      <TouchableOpacity style={styles.skipStyles} onPress={getPastevents}>
         <FontAwesome style={styles.icos} name="briefcase" />
       </TouchableOpacity>
 
@@ -138,6 +229,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.defaultWhite,
     justifyContent: 'center',
   },
+
   headerText: {
     fontSize: 30,
     fontWeight: 'bold',

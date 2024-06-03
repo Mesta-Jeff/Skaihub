@@ -5,20 +5,31 @@ import Colors from '../constants/Colors';
 
 
 export const SLIDER_WIDTH = Dimensions.get('window').width + 80;
-export const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 0.79);
+export const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 0.82);
 
 const EventListCard= ({ item, index, onPress }) => {
 
-  const { image, title, content, creator, id } = item;
+  const { medium_image, event_title, venue, id, start_date, first_name,title,last_name } = item;
+
+  // Parse the date and extract the short month name
+  const date = new Date(start_date);
+  const month = date.toLocaleString('en-US', { month: 'short' });
+  const day = date.getDate();
+  const year = date.getFullYear();
+
 
   return (
     <View>
       <View style={styles.card}>
-        <Image source={image} style={styles.cardImage} resizeMode="contain" />
+        <Image source={{ uri: medium_image }}  style={styles.cardImage}/>
         <View style={styles.stack1}>
-            <Text style={styles.cardTitle} allowFontScaling={false} numberOfLines={2} ellipsizeMode='tail'>{title}</Text>
-            <Text style={styles.cardCreator} allowFontScaling={false}>{creator}</Text>
-            <Text onPress={() => onPress(title, id)} style={styles.readMore} allowFontScaling={false}>See More Details..</Text>
+            <Text style={styles.cardTitle} allowFontScaling={false} numberOfLines={2} ellipsizeMode='tail'>{event_title}</Text>
+            <Text style={styles.cardCreator} numberOfLines={1} ellipsizeMode="tail">Date: {`${month} ${day}, ${year} | ${venue}`}</Text>
+            <View style={{flexDirection: 'row', overflow: 'hidden'}}>
+              <Text style={[ styles.cardCreator, {marginTop: 10, marginRight: 5, width: 195}]} allowFontScaling={false} numberOfLines={1} ellipsizeMode='tail'>By | { title + " " + first_name + " " +last_name} |
+              </Text>
+              <Text onPress={() => onPress(event_title, id)} style={styles.readMore} allowFontScaling={false}>See More...</Text>
+            </View>
         </View>
       </View>
     </View>
@@ -47,6 +58,7 @@ const styles = StyleSheet.create({
   cardImage: {
     width: 100,
     height: 110,
+    resizeMode: 'contain'
   },
   cardTitle: {
     fontWeight: 'bold',

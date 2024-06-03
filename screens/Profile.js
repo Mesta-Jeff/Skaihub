@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { StyleSheet, Text, View, ImageBackground, ScrollView, Image } from 'react-native';
+import { StyleSheet, Text, View, ImageBackground, ScrollView, Image, TouchableOpacity, Alert } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { LinearGradient } from 'expo-linear-gradient';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
@@ -10,23 +10,15 @@ import { APP_NAME, BASE_URL } from '../constants/Var';
 
 
 import Colors from '../constants/Colors';
+import Loader from '../components/Loader';
 
 export default function Profile({ navigation }) {
 
-  const logoutUser = async () => {
-    try {
-      await AsyncStorage.removeItem('user');
-      console.log('User data removed');
-      navigation.push('Login');
-    } catch (error) {
-      console.error('Failed to remove user data:', error);
-    }
-  };
 
-  const [userState, setUserState] = useState(null);
+  const [pageloading, setPageLoading] = useState(false);
   const [userImage, setUserImage] = useState(null);
   const [nickname, setUserNick] = useState(null);
-  const [role, setUserRole] = useState(null);
+  const [Name, setUserName] = useState(null);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -35,14 +27,11 @@ export default function Profile({ navigation }) {
 
         if (userData !== null) {
           const user = JSON.parse(userData);
-          setUserState("Active");
           setUserImage(user.image);
           setUserNick(user.nickname);
-          setUserRole(user.role);
+          setUserName(user.name);
 
-        } else {
-          setUserState("Inactive");
-        }
+        } 
       } catch (error) {
         console.error('Failed to retrieve user data:', error);
       }
@@ -51,20 +40,46 @@ export default function Profile({ navigation }) {
     fetchUserData();
   }, []);
 
+
+  // Loging user out
+  const logoutUser = async () => {
+    Alert.alert(
+      'Logout Confirmation', 'Are you sure you want to log out?',
+      [
+        { text: 'No', onPress: () => console.log('Logout cancelled'), style: 'cancel', },
+        {
+          text: 'Yes',
+          onPress: async () => {
+            setPageLoading(true);
+            try {
+              await AsyncStorage.removeItem('user');
+              navigation.push('Login');
+            } finally {
+              setPageLoading(false);
+            }
+          },
+        },
+      ],
+      { cancelable: false }
+    );
+  };
+
   return (
     <View style={styles.container}>
+      <Loader loading={pageloading} />
+
       <ImageBackground source={require('../assets/usercover.jpg')} style={styles.backgroundImage} >
         <LinearGradient colors={[Colors.defaultTransparent, Colors.defaultPinkTransparent, Colors.defaultColor]} style={styles.gradient} >
 
           <View style={styles.profileTopTextHolder}>
-            <Text style={styles.userName} allowFontScaling={false} numberOfLines={1} ellipsizeMode="tail">@Messta-Jeff Nana</Text>
-            <Text style={{ color: Colors.defaultWhite, fontWeight: '700', opacity: 0.7 }} allowFontScaling={false} numberOfLines={1} ellipsizeMode="tail">Nyinaku Ayisi Solomon Jeff</Text>
+            <Text style={styles.userName} allowFontScaling={false} numberOfLines={1} ellipsizeMode="tail">@{nickname || 'Messta-Jeff Nana'}</Text>
+            <Text style={{ color: Colors.defaultWhite, fontWeight: '700', opacity: 0.7 }} allowFontScaling={false} numberOfLines={1} ellipsizeMode="tail">{Name || 'Nana Ayisi Solomon Jeff'}</Text>
           </View>
 
           <View style={styles.profileImgHolder}>
             {
               userImage && userImage !== 'null' ? (
-                  <Image style={styles.profileImage} source={{ uri: userImage }} />
+                <Image style={styles.profileImage} source={{ uri: userImage }} />
               ) : (
                 <Image style={styles.profileImage} source={require('../assets/Commedy.jpg')} />
               )
@@ -105,7 +120,7 @@ export default function Profile({ navigation }) {
                 <Text style={{ fontFamily: 'OpenSansExtraBold', fontSize: 20, marginLeft: 10, color: Colors.defaultWhite }} allowFontScaling={false}>Header Item</Text>
               </View>
               <View style={styles.complainContainerInner2}>
-                <Text style={{ marginHorizontal: 10, marginVertical: 6, fontFamily: 'OpenSansExtraBold', }}>Content Here</Text>
+                <Text style={{ marginHorizontal: 10, marginVertical: 6, fontFamily: 'OpenSansExtraBold', }} allowFontScaling={false}>Content Here</Text>
                 <Divider />
                 <Text style={{ fontSize: 11, fontWeight: '700', margin: 10, marginTop: 2 }} allowFontScaling={false}>CLICK HERE</Text>
               </View>
@@ -188,42 +203,45 @@ export default function Profile({ navigation }) {
 
             <View style={styles.infoContainer}>
               <View style={styles.infoContainerItem}>
-              <FontAwesome style={{ marginTop: 2 }} size={20} name="info" color={Colors.defaultGrey} />
+                <FontAwesome style={{ marginTop: 2 }} size={20} name="info" color={Colors.defaultGrey} />
                 <Text style={{ fontFamily: 'OpenSansBold', fontSize: 20, color: Colors.defaultGrey, }} allowFontScaling={false}>Know About {APP_NAME}</Text>
                 <FontAwesome style={{ marginTop: 2 }} size={20} name="angle-right" color={Colors.defaultColor} />
               </View>
             </View>
             <View style={styles.infoContainer}>
               <View style={styles.infoContainerItem}>
-              <FontAwesome style={{ marginTop: 2 }} size={20} name="exchange" color={Colors.defaultGrey} />
+                <FontAwesome style={{ marginTop: 2 }} size={20} name="exchange" color={Colors.defaultGrey} />
                 <Text style={{ fontFamily: 'OpenSansBold', fontSize: 20, color: Colors.defaultGrey, }} allowFontScaling={false}>App Terms of Use</Text>
                 <FontAwesome style={{ marginTop: 2 }} size={20} name="angle-right" color={Colors.defaultColor} />
               </View>
             </View>
             <View style={styles.infoContainer}>
               <View style={styles.infoContainerItem}>
-              <FontAwesome style={{ marginTop: 2 }} size={20} name="eye" color={Colors.defaultGrey} />
+                <FontAwesome style={{ marginTop: 2 }} size={20} name="eye" color={Colors.defaultGrey} />
                 <Text style={{ fontFamily: 'OpenSansBold', fontSize: 20, color: Colors.defaultGrey, }} allowFontScaling={false}>Privacy Policies</Text>
                 <FontAwesome style={{ marginTop: 2 }} size={20} name="angle-right" color={Colors.defaultColor} />
               </View>
             </View>
             <View style={styles.infoContainer}>
               <View style={styles.infoContainerItem}>
-              <FontAwesome style={{ marginTop: 2 }} size={20} name="trash" color={Colors.defaultGrey} />
+                <FontAwesome style={{ marginTop: 2 }} size={20} name="trash" color={Colors.defaultGrey} />
                 <Text style={{ fontFamily: 'OpenSansBold', fontSize: 20, color: Colors.defaultGrey, }} allowFontScaling={false}>Clear Application Data</Text>
                 <FontAwesome style={{ marginTop: 2 }} size={20} name="angle-right" color={Colors.defaultColor} />
               </View>
             </View>
-            
+
           </View>
-          
+
           <Text style={styles.subHeader}>Report on Events </Text>
           <Divider style={styles.divider} />
           <Text>Main container
             Praesent convallis, urna non mollis facilisis, mi orci facilisis lacus, et fermentum enim sem non massa. Duis sed semper neque. Ut placerat quam non neque
           </Text>
           <Divider style={styles.divider} />
-          <View></View>
+
+          <TouchableOpacity style={styles.buttonStyles} onPress={logoutUser}>
+            <Text allowFontScaling={false} style={styles.buttonText}>Log out</Text>
+          </TouchableOpacity>
 
         </ScrollView>
       </View>
@@ -277,7 +295,7 @@ const styles = StyleSheet.create({
   profileTopTextHolder: {
     marginBottom: -160,
     justifyContent: 'center',
-    alignItems: 'center',
+    alignItems: 'stretch',
     width: 240
   },
   userName: {
@@ -373,9 +391,8 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.5,
     shadowRadius: 2.65,
-    elevation: 3,
-    borderStyle: 'dotted',
-    borderWidth: 1.3,
+    elevation: 1.8,
+    borderWidth: 1.1,
     borderColor: Colors.defaultGrey,
   },
   infoContainerItem: {
@@ -383,6 +400,24 @@ const styles = StyleSheet.create({
     margin: 20,
     justifyContent: 'space-between',
 
+  },
+
+  buttonStyles: {
+    backgroundColor: Colors.defaultWhite,
+    paddingVertical: 15,
+    borderRadius: 5,
+    marginTop: 10,
+    alignItems: 'center',
+    marginBottom: 15,
+    borderStyle: 'dotted',
+    borderWidth: 1.7,
+    borderColor: Colors.defaultTomato,
+  },
+
+  buttonText: {
+    color: Colors.defaultTomato,
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 
 

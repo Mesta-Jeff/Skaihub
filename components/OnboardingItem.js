@@ -19,9 +19,7 @@ const EventGridCard = ({ item }) => {
           <Text style={styles.cardTitle} allowFontScaling={false} numberOfLines={2} ellipsizeMode="tail">
             {title}
           </Text>
-          <Text style={styles.cardDescription} allowFontScaling={false}>
-            {description}
-          </Text>
+          <Text style={styles.cardDescription} allowFontScaling={false}> {description}  </Text>
         </LinearGradient>
       </ImageBackground>
     </View>
@@ -48,7 +46,7 @@ const styles = StyleSheet.create({
   },
   cardTitle: {
     fontWeight: 'bold',
-    fontSize: 35,
+    fontSize: 34,
     marginBottom: 5,
     color: Colors.defaultWhite,
     textAlign: 'center',
@@ -59,7 +57,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     flexWrap: 'wrap',
     marginHorizontal: 10,
-    marginBottom: 150
+    marginBottom: 150,
+    fontSize: 16
   },
 });
 

@@ -5,7 +5,7 @@ import Carousel from 'react-native-snap-carousel'
 import Colors from '../constants/Colors';
 
 export const SLIDER_WIDTH = Dimensions.get('window').width + 80;
-export const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 0.78);
+export const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 0.80);
 
 const adsData = [
     {
@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
     },
     image: {
       width: ITEM_WIDTH,
-      height: 200,
+      height: 150,
       borderRadius: 6,
     },
     

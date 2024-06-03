@@ -11,16 +11,18 @@ import DashboardScreen from './screens/Dashboard';
 import TicketsScreen from './screens/Tickets';
 import EventScreen from './screens/Events';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+import Loader from './components/Loader';
 
 
 const Tab = createBottomTabNavigator();
 
 const HomeScreen = ({ navigation }) => {
 
-  const [userState, setUserState] = useState(null);
+
   const [userImage, setUserImage] = useState(null);
-  const [nickname, setUserNick] = useState(null);
   const [role, setUserRole] = useState(null);
+  const [pageloading, setPageLoading] = useState(false);
+
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -29,14 +31,10 @@ const HomeScreen = ({ navigation }) => {
 
         if (userData !== null) {
           const user = JSON.parse(userData);
-          setUserState("Active");
           setUserImage(user.image);
-          setUserNick(user.nickname);
           setUserRole(user.role);
 
-        } else {
-          setUserState("Inactive");
-        }
+        } 
       } catch (error) {
         console.error('Failed to retrieve user data:', error);
       }
@@ -49,12 +47,12 @@ const HomeScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={{ flex: 1, }}>
-
+      <Loader loading={pageloading} />
       <StatusBar style="auto" />
 
       <Tab.Navigator
 
-        initialRouteName="Profile"
+        initialRouteName="Events"
         screenOptions={{
           tabBarActiveTintColor: Colors.defaultColor,
           tabBarInactiveTintColor: 'silver',

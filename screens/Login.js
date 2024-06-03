@@ -9,6 +9,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { BASE_URL, APP_NAME } from '../constants/Var';
 import Colors from '../constants/Colors';
+import Loader from '../components/Loader';
 
 export const SLIDER_WIDTH = Dimensions.get('window').width + 80;
 export const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 0.78);
@@ -16,6 +17,7 @@ export const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 0.78);
 export default function Login({ navigation }) {
 
 
+  const [pageloading, setPageLoading] = useState(false);
   const [isChecked, setChecked] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -37,17 +39,18 @@ export default function Login({ navigation }) {
       });
 
       const responseJson = await response.json();
-      setLoading(false);
-
+     
       if (responseJson.success) {
         const user = responseJson.data;
         await AsyncStorage.setItem('user', JSON.stringify(user));
+        setPageLoading(false); setLoading(false);
         navigation.push('Home')
       } else {
         Alert.alert('Error Alert', responseJson.message || 'Failed to authenticate user');
+        setPageLoading(false); setLoading(false);
       }
     } catch (error) {
-      setLoading(false);
+      setLoading(false); setPageLoading(false);
       Alert.alert('Error', `An error occurred. Please try again. ${error}`);
       console.error('Error:', error);
     }
@@ -62,13 +65,17 @@ export default function Login({ navigation }) {
     }
 
     setLoading(true);
+    setPageLoading(true);
     loginUser();
   };
 
 
   return (
     <SafeAreaProvider style={styles.container}>
+      <Loader loading={pageloading} />
       <StatusBar style="auto" />
+
+
       <View style={[styles.row, styles.topRow]}></View>
       <KeyboardAvoidingView style={styles.keyboard} behavior={Platform.OS == "ios" ? "padding" : "height"}
         keyboardVerticalOffset={64} >

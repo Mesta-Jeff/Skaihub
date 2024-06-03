@@ -1,5 +1,4 @@
-
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Dimensions, Image, Text } from "react-native";
 import Colors from '../constants/Colors';
 
@@ -7,25 +6,28 @@ import Colors from '../constants/Colors';
 export const SLIDER_WIDTH = Dimensions.get('window').width + 80;
 export const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 0.79);
 
-const EventGridCard= ({ item, index, onPress }) => {
+const EventGridCard = ({ item, onPress }) => {
+  const { medium_image, event_title, venue, id, start_date } = item;
 
-  const { image, title, content, creator, logo, id } = item;
+  // Parse the date and extract the short month name
+  const date = new Date(start_date);
+  const month = date.toLocaleString('en-US', { month: 'short' });
+  const day = date.getDate();
+  const year = date.getFullYear();
 
   return (
-    <View style={{ borderWidth: 2, borderRadius: 15, borderColor: Colors.defaultColorDark,}}>
+    <View style={{ borderWidth: 2, borderRadius: 15, borderColor: Colors.defaultColorDark }}>
       <View style={styles.card}>
-        <Image source={image} style={styles.cardImage} resizeMode="contain" />
-        <Text style={styles.cardTitle} allowFontScaling={false} numberOfLines={2} ellipsizeMode="tail">{title}</Text>
+        <Image source={{ uri: medium_image }} style={styles.cardImage} />
+        <Text style={styles.cardTitle} numberOfLines={2} ellipsizeMode="tail">{event_title}</Text>
         <View style={styles.stack1}>
-            <Text style={styles.cardCreator} allowFontScaling={false}>{creator}</Text>
-            <Text onPress={() => onPress(title, id)} style={styles.readMore} allowFontScaling={false}>See More Details..</Text>
+          <Text style={styles.cardCreator} numberOfLines={1} ellipsizeMode="tail">Date: {`${month} ${day}, ${year} | ${venue}`}</Text>
+          <Text onPress={() => onPress(event_title, id)} style={styles.readMore}>See More...</Text>
         </View>
       </View>
     </View>
   );
 };
-
-
 
 const styles = StyleSheet.create({
   card: {
@@ -42,13 +44,15 @@ const styles = StyleSheet.create({
     elevation: 5,
     marginVertical: 15,
     alignItems: 'flex-start',
-    marginHorizontal: 10
+    marginHorizontal: 10,
+    justifyContent: 'flex-start',
   },
   cardImage: {
     width: ITEM_WIDTH,
-    height: 390,
+    height: 370,
     borderTopLeftRadius: 15,
     borderTopRightRadius: 15,
+    resizeMode: 'cover'
   },
   cardTitle: {
     fontWeight: 'bold',
@@ -61,13 +65,17 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     fontWeight: 'bold',
     color: 'grey',
+    width: 250
   },
 
   stack1: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginVertical:10
+    // marginVertical:10,
+    overflow: 'hidden',
+    marginBottom: 10
+
   },
 
   readMore: {
@@ -76,7 +84,8 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     marginTop: -8,
     marginBottom: 10,
-    color: 'blue'
+    color: 'blue',
+    overflow: 'hidden'
     
   }
 
