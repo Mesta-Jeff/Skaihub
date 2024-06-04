@@ -8,6 +8,7 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { StatusBar } from 'react-native';
 import Colors from './constants/Colors';
 import useCustomFonts from './src/fontFamily';
+import 'react-native-reanimated';
 
 // Importing screens
 import HomeScreen from './HomeScreen';
@@ -318,3 +319,5 @@ const styles = StyleSheet.create({
 // npx expo install react-native-modal-datetime-picker @react-native-community/datetimepicker
 
 // expo install expo-image-picker expo-file-system
+// npm install moment-timezone
+

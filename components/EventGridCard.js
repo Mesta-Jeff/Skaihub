@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, Dimensions, Image, Text } from "react-native";
+import { View, StyleSheet, Dimensions, Image, Text, TouchableOpacity } from "react-native";
 import Colors from '../constants/Colors';
 
 
@@ -9,19 +9,15 @@ export const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 0.79);
 const EventGridCard = ({ item, onPress }) => {
   const { medium_image, event_title, venue, id, start_date } = item;
 
-  // Parse the date and extract the short month name
-  const date = new Date(start_date);
-  const month = date.toLocaleString('en-US', { month: 'short' });
-  const day = date.getDate();
-  const year = date.getFullYear();
-
   return (
     <View style={{ borderWidth: 2, borderRadius: 15, borderColor: Colors.defaultColorDark }}>
       <View style={styles.card}>
-        <Image source={{ uri: medium_image }} style={styles.cardImage} />
+        <TouchableOpacity onPress={() => onPress(event_title, id)}>
+          <Image source={{ uri: medium_image }} style={styles.cardImage} />
+        </TouchableOpacity>
         <Text style={styles.cardTitle} numberOfLines={2} ellipsizeMode="tail">{event_title}</Text>
         <View style={styles.stack1}>
-          <Text style={styles.cardCreator} numberOfLines={1} ellipsizeMode="tail">Date: {`${month} ${day}, ${year} | ${venue}`}</Text>
+          <Text style={styles.cardCreator} numberOfLines={1} ellipsizeMode="tail">Date: {`${start_date} | ${venue}`}</Text>
           <Text onPress={() => onPress(event_title, id)} style={styles.readMore}>See More...</Text>
         </View>
       </View>
@@ -86,7 +82,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     color: 'blue',
     overflow: 'hidden'
-    
+
   }
 
 });

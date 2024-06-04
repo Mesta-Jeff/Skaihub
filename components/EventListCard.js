@@ -11,20 +11,13 @@ const EventListCard= ({ item, index, onPress }) => {
 
   const { medium_image, event_title, venue, id, start_date, first_name,title,last_name } = item;
 
-  // Parse the date and extract the short month name
-  const date = new Date(start_date);
-  const month = date.toLocaleString('en-US', { month: 'short' });
-  const day = date.getDate();
-  const year = date.getFullYear();
-
-
   return (
     <View>
       <View style={styles.card}>
         <Image source={{ uri: medium_image }}  style={styles.cardImage}/>
         <View style={styles.stack1}>
             <Text style={styles.cardTitle} allowFontScaling={false} numberOfLines={2} ellipsizeMode='tail'>{event_title}</Text>
-            <Text style={styles.cardCreator} numberOfLines={1} ellipsizeMode="tail">Date: {`${month} ${day}, ${year} | ${venue}`}</Text>
+            <Text style={styles.cardCreator} numberOfLines={1} ellipsizeMode="tail">Date: {`${start_date} | ${venue}`}</Text>
             <View style={{flexDirection: 'row', overflow: 'hidden'}}>
               <Text style={[ styles.cardCreator, {marginTop: 10, marginRight: 5, width: 195}]} allowFontScaling={false} numberOfLines={1} ellipsizeMode='tail'>By | { title + " " + first_name + " " +last_name} |
               </Text>
