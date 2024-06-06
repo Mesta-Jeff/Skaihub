@@ -1,4 +1,4 @@
-import React, { useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { NavigationContainer } from '@react-navigation/native';
@@ -23,6 +23,7 @@ import PastEventScreen from './screens/PastEvent';
 import EventDetailsScreen from './screens/EventDetails';
 import ResetPasswordScreen from './screens/ResetPassword';
 import CreateAccountScreen from './screens/CreateAccount';
+import EventCommentingScreen from './screens/EventCommenting'
 
 
 const Stack = createStackNavigator();
@@ -151,6 +152,21 @@ export default function App() {
                 fontSize: 15
               },
               headerRight: false
+            })}
+          />
+
+          <Stack.Screen
+            name="EventCommenting"
+            component={EventCommentingScreen}
+            options={({ route }) => ({
+              title: route.params?.title || 'Event Commenting',
+              headerShown: true,
+              headerShadowVisible: false,
+              headerTitleStyle: {
+                fontWeight: 'bold',
+                fontSize: 18,
+              },
+              headerRight: false,
             })}
           />
 

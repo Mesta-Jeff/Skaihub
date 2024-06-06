@@ -1,11 +1,11 @@
 
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, ImageBackground, ScrollView, Dimensions, TouchableOpacity, Alert, FlatList,} from 'react-native';
+import { StyleSheet, Text, View, ImageBackground, ScrollView, Dimensions, TouchableOpacity, Alert, FlatList, } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { Divider, ActivityIndicator,} from 'react-native-paper';
+import { Divider, ActivityIndicator, } from 'react-native-paper';
 import { RefreshControl } from 'react-native';
 import { BASE_URL } from '../constants/Var';
 import Carousel from 'react-native-reanimated-carousel';
@@ -22,6 +22,7 @@ import persons from '../model/DashboardData';
 export const SLIDER_WIDTH = Dimensions.get('window').width + 80;
 export const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 0.80);
 export const HEADER_HEIGHT = 350;
+let STATUS_COLOR = Colors.defaultColor ?? Colors.defaultSilver;
 
 export default function EventDetails({ route, navigation }) {
 
@@ -33,15 +34,16 @@ export default function EventDetails({ route, navigation }) {
   const [data, setData] = useState(persons.slice(0, 2));
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [userStatusCount, setUserStatusCount] = useState([]);
 
-
+ 
   // Formating the date posted
   const formatRelativeTime = (dateString) => {
     const date = moment.tz(dateString, 'YYYY-MM-DD HH:mm:ss', 'GMT');
     const now = moment().tz('GMT');
     const diff = now.diff(date, 'seconds');
 
-  
+
     if (diff < 60) {
       return `${diff} secs ago`;
     } else if (diff < 3600) {
@@ -101,7 +103,6 @@ export default function EventDetails({ route, navigation }) {
 
       } catch (error) {
         console.error('Failed to retrieve user data:', error);
-        Alert.alert('Error', 'Failed to retrieve user data');
       } finally {
         setLoading(false);
       }
@@ -116,12 +117,12 @@ export default function EventDetails({ route, navigation }) {
       const url = `${BASE_URL}/events/someone-viewing`;
       const userData2 = await AsyncStorage.getItem('user');
       const { token, api_key, api_token, user_key, user_id } = JSON.parse(userData2);
-  
+
       const body = {
         event_id: id,
         user_id: user_id,
       };
-  
+
       try {
         const response = await fetch(url, {
           method: 'POST',
@@ -135,18 +136,52 @@ export default function EventDetails({ route, navigation }) {
           },
           body: JSON.stringify(body),
         });
-  
+
         const responseData = await response.json();
         console.log('Response Data:', responseData);
       } catch (error) {
         console.error('Failed to retrieve user data:', error);
       }
     }, 3000);
-  
+
     return () => {
       clearTimeout(timer);
     };
   }, []);
+
+
+  // Making API call to see if the user has commented, liked, or stared
+  const fetchUserStatusCount = async () => {
+    try {
+      const userCount = await AsyncStorage.getItem('user');
+      const { token, api_key, api_token, user_key, user_id } = JSON.parse(userCount);
+      const url = `${BASE_URL}/events/user-status-count?user_id=${user_id}=&event_id=${id}`;
+
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+          'ApiKey': api_key,
+          'ApiToken': api_token,
+          'UserKey': user_key,
+        },
+      });
+
+      const responseData = await response.json();
+      const sdata = responseData.data;
+      if (Array.isArray(sdata)) {
+        setUserStatusCount(sdata);
+      } else {
+        console.error('Not Array:', sdata);
+        // Alert.alert('Request Failed', 'Check your internet connection, request for data failed');
+      }
+
+    } catch (error) {
+      console.error('Failed to retrieve user data:', error);
+    }
+  };
 
   // Making API Request that some is lking event
   const handleLikes = async () => {
@@ -174,16 +209,62 @@ export default function EventDetails({ route, navigation }) {
       });
 
       const responseJson = await response.json();
-        if (responseJson.success) {
-   
-        } else {
-
-        }
-      } catch (error) {
-   
+      if (responseJson.success) {
+        console.log('Response Data:', responseJson);
+      } else {
+        console.log('Response Data:', responseJson);
       }
+    } catch (error) {
+      console.log('Response Data:', responseJson);
+    }
   };
 
+  // Making API Request that some is staring event
+  const handleStars = async () => {
+    try {
+      const url = `${BASE_URL}/events/someone-staring`;
+      const userData3 = await AsyncStorage.getItem('user');
+      const { token, api_key, api_token, user_key, user_id } = JSON.parse(userData3);
+
+      const body = {
+        event_id: id,
+        user_id: user_id,
+      };
+
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+          'ApiKey': api_key,
+          'ApiToken': api_token,
+          'UserKey': user_key,
+        },
+        body: JSON.stringify(body),
+      });
+
+      const responseJson = await response.json();
+      if (responseJson.success) {
+        console.log('Response Data:', responseJson);
+      } else {
+        console.log('Response Data:', responseJson);
+      }
+    } catch (error) {
+      console.log('Response Data:', responseJson);
+    }
+  };
+
+   // Making API Request that some is staring event
+  const handleComments = async () => {
+    setPageLoading(true)
+    try {
+      await AsyncStorage.getItem('user');
+      navigation.navigate('EventCommenting', { title: title, id: id });
+    } finally {
+      setPageLoading(false);
+    }
+  };
 
   // Creating a view when the list ie empty
   const myListEmpty = () => {
@@ -223,7 +304,7 @@ export default function EventDetails({ route, navigation }) {
 
   // Extracting the first event data (you can modify this as needed)
   const e = eventsData.length > 0 ? eventsData[0] : {};
-  // console.log('Data Received', JSON.stringify(eventsData, null, 2));
+
 
   if (loading) {
     return (
@@ -236,7 +317,8 @@ export default function EventDetails({ route, navigation }) {
   return (
     <View style={styles.container}>
       <Loader loading={pageloading} />
-      <ImageBackground source={{uri: e.small_image}} style={styles.backgroundImage} >
+
+      <ImageBackground source={{ uri: e.small_image }} style={styles.backgroundImage} >
         <LinearGradient colors={[Colors.defaultTransparent, Colors.defaultPinkTransparent, Colors.defaultColor]} style={styles.gradient} >
           <View style={styles.profileTopTextHolder}>
             <Text style={styles.headerTtitle} allowFontScaling={false} numberOfLines={1} ellipsizeMode="tail">{title || '...'}</Text>
@@ -245,36 +327,34 @@ export default function EventDetails({ route, navigation }) {
         </LinearGradient>
       </ImageBackground>
 
-      <ScrollView 
-        maximumZoomScale={90}
-        contentContainerStyle={styles.bottomScroll}>
+      <ScrollView contentContainerStyle={styles.bottomScroll}>
 
         <Text style={styles.subHeader}>Statistics on Events </Text>
         <Divider style={styles.divider} />
         <View style={styles.eventReport}>
           <View style={styles.eventItem}>
-            <FontAwesome style={{ marginTop: 5 }} size={25} name="eye" color={Colors.defaultSilver} />
-            <Text style={{ fontFamily: 'OpenSansExtraBold', fontSize: 16 }} allowFontScaling={false}>{e.views != null ? e.views : '--'}</Text>
+            <FontAwesome style={{ marginTop: 5 }} size={25} name="eye" color={Colors.defaultColor} />
+            <Text style={{ fontFamily: 'OpenSansBold', fontSize: 16 }} allowFontScaling={false}>{e.views != null ? e.views : '--'}</Text>
           </View>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={handleStars}>
             <View style={styles.eventItem}>
               <FontAwesome style={{ marginTop: 5 }} size={25} name="star-half-full" color={Colors.defaultSilver} />
-              <Text style={{ fontFamily: 'OpenSansExtraBold', fontSize: 16 }} allowFontScaling={false}>{e.stars != null ? e.stars : '--'}</Text>
+              <Text style={{ fontFamily: 'OpenSansBold', fontSize: 16 }} allowFontScaling={false}>{e.stars != null ? e.stars : '--'}</Text>
             </View>
           </TouchableOpacity>
 
           <TouchableOpacity onPress={handleLikes}>
             <View style={styles.eventItem}>
               <FontAwesome style={{ marginTop: 5 }} size={25} name="thumbs-o-up" color={Colors.defaultSilver} />
-              <Text style={{ fontFamily: 'OpenSansExtraBold', fontSize: 16 }} allowFontScaling={false}>
+              <Text style={{ fontFamily: 'OpenSansBold', fontSize: 16 }} allowFontScaling={false}>
                 {e.likes != null ? e.likes : '--'}
               </Text>
             </View>
           </TouchableOpacity>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={handleComments}>
             <View style={styles.eventItem}>
               <FontAwesome style={{ marginTop: 5 }} size={25} name="commenting-o" color={Colors.defaultSilver} />
-              <Text style={{ fontFamily: 'OpenSansExtraBold', fontSize: 16 }} allowFontScaling={false}>{e.comments != null ? e.comments : '--'}</Text>
+              <Text style={{ fontFamily: 'OpenSansBold', fontSize: 16 }} allowFontScaling={false}>{e.comments != null ? e.comments : '--'}</Text>
             </View>
           </TouchableOpacity>
 
@@ -296,13 +376,13 @@ export default function EventDetails({ route, navigation }) {
               <View>
                 <Text style={{ fontSize: 12, fontWeight: '700', marginHorizontal: 10, marginTop: 2, color: Colors.defaultSilver }} allowFontScaling={false}>Happening On:</Text>
                 <Text style={{ marginHorizontal: 10, marginBottom: 6, fontFamily: 'OpenSansBold', }} allowFontScaling={false}>
-                {e.start_date != null ? e.start_date : '--'}
+                  {e.start_date != null ? e.start_date : '--'}
                 </Text>
               </View>
               <View style={{ alignItems: 'center', }}>
                 <Text style={{ fontSize: 12, fontWeight: '700', marginHorizontal: 10, marginTop: 2, color: Colors.defaultSilver }} allowFontScaling={false}>Event Type</Text>
                 <Text style={{ marginHorizontal: 10, marginBottom: 6, fontFamily: 'OpenSansBold', }} allowFontScaling={false}>
-                  {e.event_type != null ? e.event_type : '--'} 
+                  {e.event_type != null ? e.event_type : '--'}
                 </Text>
               </View>
               <View>
@@ -325,7 +405,7 @@ export default function EventDetails({ route, navigation }) {
               For more information:
             </Text>
             <Text style={{ marginHorizontal: 10, marginBottom: 6, fontFamily: 'OpenSansBold', }} allowFontScaling={false}>
-             {e.phone != null ? e.phone + " (" + e.email + ")" : '--'}
+              {e.phone != null ? e.phone + " (" + e.email + ")" : '--'}
             </Text>
             <Divider style={{ marginHorizontal: 10, }} />
 
