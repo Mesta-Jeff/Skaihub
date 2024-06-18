@@ -1,5 +1,8 @@
-import React from 'react';
-import { View, StyleSheet, Image, Text, Dimensions } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, StyleSheet, Image, Text, Dimensions, TouchableOpacity } from 'react-native';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { Divider, } from 'react-native-paper';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import Colors from '../constants/Colors';
 
@@ -7,10 +10,34 @@ export const SLIDER_WIDTH = Dimensions.get('window').width + 80;
 export const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 0.80);
 
 const Commenting = ({ item, index, onPress }) => {
-    const { image, title, description, content, id } = item;
+    const { image, comment, id, nickname, created_at } = item;
+    const [person, setPerson] = useState(null);
+
+// gETTING THE USERinfo from the async storage
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const userData = await AsyncStorage.getItem('user');
+        if (userData !== null) {
+          const user = JSON.parse(userData);
+          setPerson(user.nickname);
+        }
+      } catch (error) {
+        console.error('Failed to retrieve user data:', error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
+    // Parse the created_at timestamp
+    const parsedDate = new Date(created_at);
+
+    // Format the date to "MMM DD, YYYY | hh:mm AM/PM" format
+    const formattedDate = `${parsedDate.toLocaleString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })} | ${parsedDate.toLocaleString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })}`;
 
     return (
-        <View style={{ marginBottom: -10, width: ITEM_WIDTH }}>
+        <View style={{ marginBottom: 10, width: ITEM_WIDTH }}>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <View style={styles.card}>
                     {image && image !== 'null' ? (
@@ -21,23 +48,58 @@ const Commenting = ({ item, index, onPress }) => {
                         )
                     ) : null}
                 </View>
-                <Text style={{ fontWeight: 'bold', fontSize: 15, color: Colors.defaultGrey, marginLeft: 10 }} allowFontScaling={false} numberOfLines={1} ellipsizeMode="tail" >
-                    By: The Creator here
+                <Text style={{ fontWeight: 'bold', fontSize: 15, color: Colors.defaultGrey, marginLeft: 10, }} allowFontScaling={false} numberOfLines={1} ellipsizeMode="tail">
+                    Posted by: {person === nickname ? 'You' : nickname}
                 </Text>
             </View>
-            <View style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
+            <View style={{ flexDirection: 'row', alignItems: 'flex-start', marginTop: -15 }}>
                 <View style={styles.borderView}></View>
                 <View style={styles.contentContainer}>
-                    <Text style={styles.cardComment} allowFontScaling={false}>{content}</Text>
+                    <Text style={styles.cardComment} allowFontScaling={false} selectable>{comment}</Text>
                     <View style={{ flexDirection: 'row' }}>
-                        <Text style={styles.cardDescriptions} allowFontScaling={false} numberOfLines={1} ellipsizeMode="tail" > {description} | </Text>
-                        <Text onPress={() => onPress(title, id)} style={styles.readMore} allowFontScaling={false}>Reply..</Text>
+                        <Text style={styles.cardDescriptions} allowFontScaling={false} numberOfLines={1} ellipsizeMode="tail">On: {formattedDate} | </Text>
+                        <Text style={styles.readMore} allowFontScaling={false}>Trash Comment..</Text>
                     </View>
+                    <Divider style={{ marginBottom: 5, }} />
+                    <View style={styles.eventReport}>
+                        <TouchableOpacity onPress={() => onPress(nickname, 'dislike', id)}>
+                            <View style={styles.eventItem}>
+                                <FontAwesome style={{ marginTop: 2, marginRight: 5 }} size={14} name="thumbs-o-down" color={Colors.defaultSilver} />
+                                <Text style={{ fontWeight: '500', fontSize: 14, color: Colors.defaultSilver }} allowFontScaling={false}>0</Text>
+                            </View>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => onPress(nickname, 'comment', id)}>
+                            <View style={styles.eventItem}>
+                                <FontAwesome style={{ marginTop: 2, marginRight: 5 }} size={14} name="comment-o" color={Colors.defaultSilver} />
+                                <Text style={{ fontWeight: '500', fontSize: 14, color: Colors.defaultSilver }} allowFontScaling={false}>0</Text>
+                            </View>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => onPress(nickname, 'like', id)}>
+                            <View style={styles.eventItem}>
+                                <FontAwesome style={{ marginTop: 2, marginRight: 5 }} size={14} name="thumbs-o-up" color={Colors.defaultSilver} />
+                                <Text style={{ fontWeight: '500', fontSize: 14, color: Colors.defaultSilver }} allowFontScaling={false}>0</Text>
+                            </View>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => onPress(nickname, 'smile', id)}>
+                            <View style={styles.eventItem}>
+                                <FontAwesome style={{ marginTop: 2, marginRight: 5 }} size={14} name="smile-o" color={Colors.defaultSilver} />
+                                <Text style={{ fontWeight: '500', fontSize: 14, color: Colors.defaultSilver }} allowFontScaling={false}>0</Text>
+                            </View>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => onPress(nickname, 'retweet', id)}>
+                            <View style={styles.eventItem}>
+                                <FontAwesome style={{ marginTop: 2, marginRight: 5 }} size={14} name="retweet" color={Colors.defaultSilver} />
+                                <Text style={{ fontWeight: '500', fontSize: 14, color: Colors.defaultSilver }} allowFontScaling={false}>0</Text>
+                            </View>
+                        </TouchableOpacity>
+                    </View>
+                    <Divider style={{ marginTop: 5, }} />
                 </View>
             </View>
         </View>
     );
 };
+
 
 const styles = StyleSheet.create({
     card: {
@@ -69,9 +131,9 @@ const styles = StyleSheet.create({
         borderLeftWidth: 2,
         borderLeftColor: Colors.defaultColor,
         height: '100%',
-        marginLeft: 30,
-        width: 35,
-        marginTop: -6
+        marginLeft: 27,
+        width: 37,
+        marginTop: 10
     },
     contentContainer: {
         flex: 1,
@@ -96,6 +158,16 @@ const styles = StyleSheet.create({
         marginLeft: 6,
         marginBottom: 10,
         color: Colors.defaultColorLight,
+    },
+    eventReport: {
+        flexDirection: 'row',
+        justifyContent: 'space-around'
+    },
+
+    eventItem: {
+        alignItems: 'center',
+        justifyContent: 'space-evenly',
+        flexDirection: 'row'
     },
 });
 

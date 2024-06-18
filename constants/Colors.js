@@ -16,6 +16,8 @@ const Colors = {
     defaultGrey: 'grey',
     defaultTomato: 'tomato',
 
+    defaultSelected: '#39fcc8',
+
 
     // Transparent
     defaultTransparent: 'rgba(0, 0, 0, 0)',

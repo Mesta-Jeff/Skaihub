@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Skaihub",
-    "slug": "Skaihub",
+    "name": "SkaiTick",
+    "slug": "SkaiTick",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/Main Logo.png",

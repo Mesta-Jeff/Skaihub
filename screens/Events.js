@@ -77,7 +77,7 @@ export default function Events({ navigation }) {
   const width = Dimensions.get('window').width;
 
 
-  const handlePress = async (title, id) => {
+  const goNextPage = async (title, id) => {
     setPageLoading(true)
     try {
       await AsyncStorage.getItem('user');
@@ -121,7 +121,7 @@ export default function Events({ navigation }) {
                   data={eventsData}
                   scrollAnimationDuration={4000}
                   renderItem={({ item }) => (
-                    <EventGridTemplate item={item} onPress={handlePress} />
+                    <EventGridTemplate item={item} onPress={goNextPage} />
                   )}
                 />
               ) : (
@@ -151,7 +151,7 @@ export default function Events({ navigation }) {
                   data={eventsData}
                   scrollAnimationDuration={4000}
                   renderItem={({ item }) => (
-                    <EventListTemplate item={item} onPress={handlePress} />
+                    <EventListTemplate item={item} onPress={goNextPage} />
                   )}
                   style={{ height: 550, marginVertical: 10 }}
                 />

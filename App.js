@@ -23,7 +23,9 @@ import PastEventScreen from './screens/PastEvent';
 import EventDetailsScreen from './screens/EventDetails';
 import ResetPasswordScreen from './screens/ResetPassword';
 import CreateAccountScreen from './screens/CreateAccount';
-import EventCommentingScreen from './screens/EventCommenting'
+import EventCommentingScreen from './screens/EventCommenting';
+import GeneralTicketPreviewScreen from './screens/GeneralTicketPreview';
+import MovieTickeSelectionScreen from './screens/MovieTicketSelection';
 
 
 const Stack = createStackNavigator();
@@ -64,7 +66,7 @@ export default function App() {
 
       <NavigationContainer>
 
-        <Stack.Navigator initialRouteName="Landing"
+        <Stack.Navigator initialRouteName="Home"
           screenOptions={({ navigation }) => ({
             headerStyle: {
               backgroundColor: Colors.defaultWhite,
@@ -165,6 +167,31 @@ export default function App() {
               headerTitleStyle: {
                 fontWeight: 'bold',
                 fontSize: 18,
+              },
+              headerRight: false,
+            })}
+          />
+
+          <Stack.Screen
+            name="GeneralTicketPreview"
+            component={GeneralTicketPreviewScreen}
+            options={({ route }) => ({
+              title: route.params?.title || 'Ticket Preview',
+              headerShown: true,
+              headerShadowVisible: false,
+              headerRight: false,
+            })}
+          />
+          <Stack.Screen
+            name="MovieTicketSelection"
+            component={MovieTickeSelectionScreen}
+            options={({ route }) => ({
+              title: route.params?.title || 'Seat Selection',
+              headerShown: true,
+              headerShadowVisible: false,
+              headerTintColor: Colors.defaultWhite,
+              headerStyle: {
+                backgroundColor: Colors.defaultColor,
               },
               headerRight: false,
             })}

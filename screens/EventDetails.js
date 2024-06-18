@@ -34,7 +34,6 @@ export default function EventDetails({ route, navigation }) {
   const [data, setData] = useState(persons.slice(0, 2));
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [userStatusCount, setUserStatusCount] = useState([]);
 
  
   // Formating the date posted
@@ -138,7 +137,7 @@ export default function EventDetails({ route, navigation }) {
         });
 
         const responseData = await response.json();
-        console.log('Response Data:', responseData);
+        console.log('Response:', responseData.message);
       } catch (error) {
         console.error('Failed to retrieve user data:', error);
       }
@@ -149,39 +148,6 @@ export default function EventDetails({ route, navigation }) {
     };
   }, []);
 
-
-  // Making API call to see if the user has commented, liked, or stared
-  const fetchUserStatusCount = async () => {
-    try {
-      const userCount = await AsyncStorage.getItem('user');
-      const { token, api_key, api_token, user_key, user_id } = JSON.parse(userCount);
-      const url = `${BASE_URL}/events/user-status-count?user_id=${user_id}=&event_id=${id}`;
-
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-          'ApiKey': api_key,
-          'ApiToken': api_token,
-          'UserKey': user_key,
-        },
-      });
-
-      const responseData = await response.json();
-      const sdata = responseData.data;
-      if (Array.isArray(sdata)) {
-        setUserStatusCount(sdata);
-      } else {
-        console.error('Not Array:', sdata);
-        // Alert.alert('Request Failed', 'Check your internet connection, request for data failed');
-      }
-
-    } catch (error) {
-      console.error('Failed to retrieve user data:', error);
-    }
-  };
 
   // Making API Request that some is lking event
   const handleLikes = async () => {
@@ -208,14 +174,15 @@ export default function EventDetails({ route, navigation }) {
         body: JSON.stringify(body),
       });
 
-      const responseJson = await response.json();
-      if (responseJson.success) {
-        console.log('Response Data:', responseJson);
+      if (response.ok) {
+        const responseJson = await response.json();
+        console.log('Response Data:', responseJson.message);
       } else {
-        console.log('Response Data:', responseJson);
+        const errorResponse = await response.json();
+        Alert.alert('Attention!!!', errorResponse.message || 'An error occurred');
       }
     } catch (error) {
-      console.log('Response Data:', responseJson);
+      console.error('Error:', error);
     }
   };
 
@@ -244,14 +211,15 @@ export default function EventDetails({ route, navigation }) {
         body: JSON.stringify(body),
       });
 
-      const responseJson = await response.json();
-      if (responseJson.success) {
-        console.log('Response Data:', responseJson);
+      if (response.ok) {
+        const responseJson = await response.json();
+        console.log('Response Data:', responseJson.message);
       } else {
-        console.log('Response Data:', responseJson);
+        const errorResponse = await response.json();
+        Alert.alert('Attention!!!', errorResponse.message || 'An error occurred');
       }
     } catch (error) {
-      console.log('Response Data:', responseJson);
+      console.error('Error:', error);
     }
   };
 
@@ -295,11 +263,17 @@ export default function EventDetails({ route, navigation }) {
     setPageLoading(true);
     try {
       await AsyncStorage.getItem('user');
-      navigation.push('Landing');
+      navigation.navigate('MovieTicketSelection', { title: title, id: id, kind: e.event_type });
     } finally {
       setPageLoading(false);
     }
   };
+
+  // Going back to the previous page
+  const goPrevious= () =>
+  {
+    navigation.goBack();
+  }
 
 
   // Extracting the first event data (you can modify this as needed)
@@ -404,7 +378,7 @@ export default function EventDetails({ route, navigation }) {
             <Text style={{ fontSize: 12, fontWeight: '700', marginHorizontal: 10, marginTop: 6, color: Colors.defaultSilver }} allowFontScaling={false}>
               For more information:
             </Text>
-            <Text style={{ marginHorizontal: 10, marginBottom: 6, fontFamily: 'OpenSansBold', }} allowFontScaling={false}>
+            <Text style={{ marginHorizontal: 10, marginBottom: 6, fontFamily: 'OpenSansBold', }} allowFontScaling={false} selectable>
               {e.phone != null ? e.phone + " (" + e.email + ")" : '--'}
             </Text>
             <Divider style={{ marginHorizontal: 10, }} />
@@ -412,7 +386,7 @@ export default function EventDetails({ route, navigation }) {
             <Text style={{ fontSize: 12, fontWeight: '700', marginHorizontal: 10, marginTop: 2, color: Colors.defaultSilver }} allowFontScaling={false}>
               Discription:
             </Text>
-            <Text style={{ marginHorizontal: 10, marginBottom: 6, fontFamily: 'SourceSans3Regular', }} allowFontScaling={false}>
+            <Text style={{ marginHorizontal: 10, marginBottom: 6, fontFamily: 'SourceSans3Regular', }} allowFontScaling={false} selectable>
               {e.content != null ? e.content : 'No data to display'}
             </Text>
             <Divider style={{ marginHorizontal: 10, }} />
@@ -456,10 +430,17 @@ export default function EventDetails({ route, navigation }) {
 
         <Text style={styles.subHeader}>Do you want attend this event...? </Text>
         <Divider style={styles.divider} />
+        <View style={{flexDirection: 'row', justifyContent: 'space-around'}}>
         <TouchableOpacity style={styles.buttonStyles} onPress={buyTickPress}>
           <FontAwesome size={20} name="ticket" color={Colors.defaultWhite} />
           <Text allowFontScaling={false} style={styles.buttonText}>{'Buy Ticket On Click'}</Text>
         </TouchableOpacity>
+
+        <TouchableOpacity style={styles.buttonButton} onPress={goPrevious}>
+          <FontAwesome size={25} name="angle-left" color={Colors.defaultWhite} />
+          <Text allowFontScaling={false} style={styles.buttonText}>{'Go Back'}</Text>
+        </TouchableOpacity>
+        </View>
 
       </ScrollView>
 
@@ -555,10 +536,21 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.defaultColor,
     flexDirection: 'row',
     paddingVertical: 15,
-    borderRadius: 5,
+    paddingHorizontal: 15,
     marginBottom: 20,
     alignItems: 'center',
     justifyContent: 'center',
+    borderRadius: 5
+  },
+  buttonButton: {
+    backgroundColor: Colors.defaultTomato,
+    flexDirection: 'row',
+    paddingVertical: 15,
+    paddingHorizontal: 15,
+    marginBottom: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 5
   },
 
   buttonText: {
