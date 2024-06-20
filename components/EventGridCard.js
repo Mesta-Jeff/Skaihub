@@ -39,6 +39,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4.65,
     elevation: 5,
     marginVertical: 15,
+    marginLeft: 7,
     alignItems: 'flex-start',
     marginHorizontal: 10,
     justifyContent: 'flex-start',

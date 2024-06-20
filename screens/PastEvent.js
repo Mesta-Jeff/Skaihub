@@ -237,7 +237,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     borderColor: 'azure',
     position: 'absolute',
-    top: 0,
+    top: -5,
     left: 30,
     marginTop: 60,
     justifyContent: 'center',

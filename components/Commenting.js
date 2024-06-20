@@ -48,7 +48,7 @@ const Commenting = ({ item, index, onPress }) => {
                         )
                     ) : null}
                 </View>
-                <Text style={{ fontWeight: 'bold', fontSize: 15, color: Colors.defaultGrey, marginLeft: 10, }} allowFontScaling={false} numberOfLines={1} ellipsizeMode="tail">
+                <Text style={{ fontWeight: 'bold', fontSize: 15, color: Colors.defaultGrey, marginLeft: 5, }} allowFontScaling={false} numberOfLines={1} ellipsizeMode="tail">
                     Posted by: {person === nickname ? 'You' : nickname}
                 </Text>
             </View>
@@ -64,32 +64,32 @@ const Commenting = ({ item, index, onPress }) => {
                     <View style={styles.eventReport}>
                         <TouchableOpacity onPress={() => onPress(nickname, 'dislike', id)}>
                             <View style={styles.eventItem}>
-                                <FontAwesome style={{ marginTop: 2, marginRight: 5 }} size={14} name="thumbs-o-down" color={Colors.defaultSilver} />
-                                <Text style={{ fontWeight: '500', fontSize: 14, color: Colors.defaultSilver }} allowFontScaling={false}>0</Text>
+                                <FontAwesome style={{ marginTop: 2, marginRight: 5 }} size={10} name="thumbs-o-down" color={Colors.defaultSilver} />
+                                <Text style={{ fontWeight: '500', fontSize: 12, color: Colors.defaultSilver }} allowFontScaling={false}>0</Text>
                             </View>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={() => onPress(nickname, 'comment', id)}>
                             <View style={styles.eventItem}>
                                 <FontAwesome style={{ marginTop: 2, marginRight: 5 }} size={14} name="comment-o" color={Colors.defaultSilver} />
-                                <Text style={{ fontWeight: '500', fontSize: 14, color: Colors.defaultSilver }} allowFontScaling={false}>0</Text>
+                                <Text style={{ fontWeight: '500', fontSize: 12, color: Colors.defaultSilver }} allowFontScaling={false}>0</Text>
                             </View>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={() => onPress(nickname, 'like', id)}>
                             <View style={styles.eventItem}>
-                                <FontAwesome style={{ marginTop: 2, marginRight: 5 }} size={14} name="thumbs-o-up" color={Colors.defaultSilver} />
-                                <Text style={{ fontWeight: '500', fontSize: 14, color: Colors.defaultSilver }} allowFontScaling={false}>0</Text>
+                                <FontAwesome style={{ marginTop: 2, marginRight: 5 }} size={10} name="thumbs-o-up" color={Colors.defaultSilver} />
+                                <Text style={{ fontWeight: '500', fontSize: 12, color: Colors.defaultSilver }} allowFontScaling={false}>0</Text>
                             </View>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={() => onPress(nickname, 'smile', id)}>
                             <View style={styles.eventItem}>
-                                <FontAwesome style={{ marginTop: 2, marginRight: 5 }} size={14} name="smile-o" color={Colors.defaultSilver} />
-                                <Text style={{ fontWeight: '500', fontSize: 14, color: Colors.defaultSilver }} allowFontScaling={false}>0</Text>
+                                <FontAwesome style={{ marginTop: 2, marginRight: 5 }} size={10} name="smile-o" color={Colors.defaultSilver} />
+                                <Text style={{ fontWeight: '500', fontSize: 12, color: Colors.defaultSilver }} allowFontScaling={false}>0</Text>
                             </View>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={() => onPress(nickname, 'retweet', id)}>
                             <View style={styles.eventItem}>
-                                <FontAwesome style={{ marginTop: 2, marginRight: 5 }} size={14} name="retweet" color={Colors.defaultSilver} />
-                                <Text style={{ fontWeight: '500', fontSize: 14, color: Colors.defaultSilver }} allowFontScaling={false}>0</Text>
+                                <FontAwesome style={{ marginTop: 2, marginRight: 5 }} size={10} name="retweet" color={Colors.defaultSilver} />
+                                <Text style={{ fontWeight: '500', fontSize: 12, color: Colors.defaultSilver }} allowFontScaling={false}>0</Text>
                             </View>
                         </TouchableOpacity>
                     </View>
@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
         borderLeftColor: Colors.defaultColor,
         height: '100%',
         marginLeft: 27,
-        width: 37,
+        width: 30,
         marginTop: 10
     },
     contentContainer: {

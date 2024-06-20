@@ -80,10 +80,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.defaultWhite,
     alignItems: 'stretch',
+    padding: 10,
   },
 
   flat: {
-    marginTop: 18
+    marginTop: -2,
+    marginLeft: -9,
   },
 
 });

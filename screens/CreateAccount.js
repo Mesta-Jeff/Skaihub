@@ -376,8 +376,8 @@ const styles = StyleSheet.create({
         width: ITEM_WIDTH,
         backgroundColor: Colors.defaultColor,
         height: 220,
-        marginRight: 20,
-        marginLeft: 15,
+        // marginRight: 20,
+        marginLeft: 10,
         marginVertical: 20,
         borderRadius: 12,
         shadowColor: "#000",
@@ -412,10 +412,10 @@ const styles = StyleSheet.create({
     bottomRow: {
         justifyContent: 'flex-start',
         height: '100%',
-        marginTop: -7,
+        marginTop: -20,
         width: ITEM_WIDTH,
         marginRight: 20,
-        marginLeft: 15,
+        marginLeft: 10,
         alignItems: 'stretch',
     },
 

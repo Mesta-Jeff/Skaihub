@@ -235,7 +235,7 @@ const styles = StyleSheet.create({
   },
   commentsList: {
     flexGrow: 1,
-    // justifyContent: 'center',
+    // marginLeft: -2,
     
   },
   comment: {

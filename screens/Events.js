@@ -32,6 +32,7 @@ export default function Events({ navigation }) {
   const [pageloading, setPageLoading] = useState(false);
 
   useEffect(() => {
+    
     const fetchData = async () => {
       const userData = await AsyncStorage.getItem('user');
       const { token, api_key, api_token, user_key } = JSON.parse(userData);

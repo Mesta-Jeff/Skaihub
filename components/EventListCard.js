@@ -19,7 +19,7 @@ const EventListCard= ({ item, index, onPress }) => {
             <Text style={styles.cardTitle} allowFontScaling={false} numberOfLines={2} ellipsizeMode='tail'>{event_title}</Text>
             <Text style={styles.cardCreator} numberOfLines={1} ellipsizeMode="tail">Date: {`${start_date} | ${venue}`}</Text>
             <View style={{flexDirection: 'row', overflow: 'hidden'}}>
-              <Text style={[ styles.cardCreator, {marginTop: 10, marginRight: 5, width: 195}]} allowFontScaling={false} numberOfLines={1} ellipsizeMode='tail'>By | { title + " " + first_name + " " +last_name} |
+              <Text style={[ styles.cardCreator, {marginTop: 10, marginRight: 5, width: 180}]} allowFontScaling={false} numberOfLines={1} ellipsizeMode='tail'>By | { title + " " + first_name + " " +last_name} |
               </Text>
               <Text onPress={() => onPress(event_title, id)} style={styles.readMore} allowFontScaling={false}>See More...</Text>
             </View>

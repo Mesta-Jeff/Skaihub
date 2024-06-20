@@ -296,7 +296,8 @@ const styles = StyleSheet.create({
     marginBottom: -160,
     justifyContent: 'center',
     alignItems: 'stretch',
-    width: 240
+    width: 240,
+    marginLeft: 6
   },
   userName: {
     fontSize: 22,

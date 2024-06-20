@@ -35,7 +35,7 @@ export default function EventDetails({ route, navigation }) {
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(true);
 
- 
+
   // Formating the date posted
   const formatRelativeTime = (dateString) => {
     const date = moment.tz(dateString, 'YYYY-MM-DD HH:mm:ss', 'GMT');
@@ -223,7 +223,7 @@ export default function EventDetails({ route, navigation }) {
     }
   };
 
-   // Making API Request that some is staring event
+  // Making API Request that some is staring event
   const handleComments = async () => {
     setPageLoading(true)
     try {
@@ -263,17 +263,31 @@ export default function EventDetails({ route, navigation }) {
     setPageLoading(true);
     try {
       await AsyncStorage.getItem('user');
-      navigation.navigate('MovieTicketSelection', { title: title, id: id, kind: e.event_type });
+      navigation.navigate('GeneralTicketPreview', { title: title, id: id, kind: e.event_type });
     } finally {
       setPageLoading(false);
     }
   };
 
   // Going back to the previous page
-  const goPrevious= () =>
-  {
+  const goPrevious = () => {
     navigation.goBack();
   }
+
+  // Function to check for singular and plural
+  const getPluralizedText = (count, singular, plural) => {
+    return count === 1 ? singular : plural;
+  };
+
+  // Function to format numbers
+  const formatNumber = (num) => {
+    if (num === null || num === undefined) return '--';
+    if (num < 1000) return num.toString();
+    if (num < 1000000) return (num / 1000).toFixed(1) + 'K';
+    if (num < 1000000000) return (num / 1000000).toFixed(1) + 'M';
+    return (num / 1000000000).toFixed(1) + 'B';
+  };
+
 
 
   // Extracting the first event data (you can modify this as needed)
@@ -306,31 +320,42 @@ export default function EventDetails({ route, navigation }) {
         <Text style={styles.subHeader}>Statistics on Events </Text>
         <Divider style={styles.divider} />
         <View style={styles.eventReport}>
+
           <View style={styles.eventItem}>
-            <FontAwesome style={{ marginTop: 5 }} size={25} name="eye" color={Colors.defaultColor} />
-            <Text style={{ fontFamily: 'OpenSansBold', fontSize: 16 }} allowFontScaling={false}>{e.views != null ? e.views : '--'}</Text>
+            <FontAwesome style={{ marginTop: 5 }} size={18} name="eye" color={Colors.defaultColor} />
+            <Text style={{ fontFamily: 'OpenSansBold', fontSize: 11 }} allowFontScaling={false}>
+              {formatNumber(e.views)} {getPluralizedText(e.views, 'Viewer', 'Viewers')}
+            </Text>
           </View>
+
           <TouchableOpacity onPress={handleStars}>
             <View style={styles.eventItem}>
-              <FontAwesome style={{ marginTop: 5 }} size={25} name="star-half-full" color={Colors.defaultSilver} />
-              <Text style={{ fontFamily: 'OpenSansBold', fontSize: 16 }} allowFontScaling={false}>{e.stars != null ? e.stars : '--'}</Text>
+              <FontAwesome style={{ marginTop: 6 }} size={18} name="star-half-full" color={Colors.defaultSilver} />
+              <Text style={{ fontFamily: 'OpenSansBold', fontSize: 11 }} allowFontScaling={false}>
+                {formatNumber(e.stars)} {getPluralizedText(e.stars, 'Star', 'Stars')}
+              </Text>
             </View>
           </TouchableOpacity>
 
           <TouchableOpacity onPress={handleLikes}>
             <View style={styles.eventItem}>
-              <FontAwesome style={{ marginTop: 5 }} size={25} name="thumbs-o-up" color={Colors.defaultSilver} />
-              <Text style={{ fontFamily: 'OpenSansBold', fontSize: 16 }} allowFontScaling={false}>
-                {e.likes != null ? e.likes : '--'}
+              <FontAwesome style={{ marginTop: 5 }} size={18} name="thumbs-o-up" color={Colors.defaultSilver} />
+              <Text style={{ fontFamily: 'OpenSansBold', fontSize: 11 }} allowFontScaling={false}>
+                {formatNumber(e.likes)} {getPluralizedText(e.likes, 'Like', 'Likes')}
               </Text>
             </View>
           </TouchableOpacity>
+
           <TouchableOpacity onPress={handleComments}>
             <View style={styles.eventItem}>
-              <FontAwesome style={{ marginTop: 5 }} size={25} name="commenting-o" color={Colors.defaultSilver} />
-              <Text style={{ fontFamily: 'OpenSansBold', fontSize: 16 }} allowFontScaling={false}>{e.comments != null ? e.comments : '--'}</Text>
+              <FontAwesome style={{ marginTop: 5 }} size={18} name="commenting-o" color={Colors.defaultSilver} />
+              <Text style={{ fontFamily: 'OpenSansBold', fontSize: 11 }} allowFontScaling={false}>
+                {formatNumber(e.comments)} {getPluralizedText(e.comments, 'Comment', 'Comments')}
+              </Text>
             </View>
           </TouchableOpacity>
+
+
 
         </View>
         <Divider style={styles.divider} />
@@ -417,7 +442,7 @@ export default function EventDetails({ route, navigation }) {
         <Text style={[styles.subHeader, { marginLeft: 100, marginTop: 2, }]}>People Who Viewed</Text>
         <View style={{ justifyContent: 'center', alignItems: 'center', }}>
           <Carousel
-            loop width={ITEM_WIDTH - 140}
+            loop width={ITEM_WIDTH - 125}
             ref={isCarousel} height={220}
             horizontal={true} autoPlay={true}
             mode='parallax' layout='tender'
@@ -430,16 +455,16 @@ export default function EventDetails({ route, navigation }) {
 
         <Text style={styles.subHeader}>Do you want attend this event...? </Text>
         <Divider style={styles.divider} />
-        <View style={{flexDirection: 'row', justifyContent: 'space-around'}}>
-        <TouchableOpacity style={styles.buttonStyles} onPress={buyTickPress}>
-          <FontAwesome size={20} name="ticket" color={Colors.defaultWhite} />
-          <Text allowFontScaling={false} style={styles.buttonText}>{'Buy Ticket On Click'}</Text>
-        </TouchableOpacity>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+          <TouchableOpacity style={styles.buttonStyles} onPress={buyTickPress}>
+            <FontAwesome size={18} name="ticket" color={Colors.defaultWhite} />
+            <Text allowFontScaling={false} style={styles.buttonText}>{'Buy Ticket On Click'}</Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity style={styles.buttonButton} onPress={goPrevious}>
-          <FontAwesome size={25} name="angle-left" color={Colors.defaultWhite} />
-          <Text allowFontScaling={false} style={styles.buttonText}>{'Go Back'}</Text>
-        </TouchableOpacity>
+          <TouchableOpacity style={styles.buttonButton} onPress={goPrevious}>
+            <FontAwesome size={20} name="angle-left" color={Colors.defaultWhite} />
+            <Text allowFontScaling={false} style={styles.buttonText}>{'Go Back'}</Text>
+          </TouchableOpacity>
         </View>
 
       </ScrollView>
@@ -535,7 +560,7 @@ const styles = StyleSheet.create({
   buttonStyles: {
     backgroundColor: Colors.defaultColor,
     flexDirection: 'row',
-    paddingVertical: 15,
+    paddingVertical: 10,
     paddingHorizontal: 15,
     marginBottom: 20,
     alignItems: 'center',
@@ -545,7 +570,7 @@ const styles = StyleSheet.create({
   buttonButton: {
     backgroundColor: Colors.defaultTomato,
     flexDirection: 'row',
-    paddingVertical: 15,
+    paddingVertical: 8,
     paddingHorizontal: 15,
     marginBottom: 20,
     alignItems: 'center',
@@ -555,8 +580,8 @@ const styles = StyleSheet.create({
 
   buttonText: {
     color: Colors.defaultWhite,
-    fontSize: 18,
-    fontFamily: 'OpenSansExtraBold',
+    fontSize: 13,
+    fontFamily: 'OpenSansBold',
     marginLeft: 10,
   },
 
