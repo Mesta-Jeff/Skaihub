@@ -16,7 +16,7 @@ export const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 0.80);
 
 export default function GeneralTicketPreview({ navigation, route }) {
 
-  const { title, id, kind } = route.params;
+  const { title, id, kind, image } = route.params;
   const [searchQuery, setSearchQuery] = useState('');
   const [innerloading, setInnerLoading] = useState(false);
   const [tickets, settickets] = useState([]);
@@ -77,8 +77,9 @@ export default function GeneralTicketPreview({ navigation, route }) {
     </View>
   );
 
+   // Finding out where to go after the click
+  const handleStatusClick = async ({ description, ticket_id, price, ticket_title, seat }) => {
 
-  const handleStatusClick = async ({ description, ticket_id, price, total, ticket_title, remaining, created_at, seat }) => {
     setPageLoading(true);
     try {
         const user = await AsyncStorage.getItem('user');
@@ -86,21 +87,28 @@ export default function GeneralTicketPreview({ navigation, route }) {
             navigation.navigate('MovieTicketSelection', {
                 title: title,
                 id: id,
+                image:image,
                 ticket_title: ticket_title,
                 ticket_id: ticket_id,
                 description: description,
                 price: price,
-                total: total,
                 seat: seat,
-                remaining: remaining,
-                created_at: created_at
+                kind: kind
             });
         } else {
-            Alert.alert('Attention Please!!!', `Do you want to buy the ${ticket_title} ticket...?`);
+          navigation.navigate('PaymentInitialization', {
+            title: title,
+            ticket_title: ticket_title,
+            ticket_id: ticket_id,
+            price: price,
+            seat: 0,
+            kind: kind
+        });
         }
     } finally {
         setPageLoading(false);
     }
+
 };
 
 
@@ -154,7 +162,6 @@ const styles = StyleSheet.create({
   ticketsList: {
     flexGrow: 1,
     // marginLeft: -2,
-
   },
   emptyContainer: {
     flex: 1,

@@ -26,6 +26,8 @@ import CreateAccountScreen from './screens/CreateAccount';
 import EventCommentingScreen from './screens/EventCommenting';
 import GeneralTicketPreviewScreen from './screens/GeneralTicketPreview';
 import MovieTickeSelectionScreen from './screens/MovieTicketSelection';
+import PaymentInitializationScreen from './screens/PaymentInitialization';
+import PaymentScreen from './screens/Payment';
 
 
 const Stack = createStackNavigator();
@@ -185,16 +187,28 @@ export default function App() {
           <Stack.Screen
             name="MovieTicketSelection"
             component={MovieTickeSelectionScreen}
-            options={({ route }) => ({
-              title: route.params?.title || 'Seat Selection',
-              headerShown: true,
+            options={{
+              headerShown: false,
               headerShadowVisible: false,
-              headerTintColor: Colors.defaultWhite,
-              headerStyle: {
-                backgroundColor: Colors.defaultColor,
-              },
-              headerRight: false,
-            })}
+            }}
+          />
+
+          <Stack.Screen
+            name="PaymentInitialization"
+            component={PaymentInitializationScreen}
+            options={{
+              headerShown: false,
+              headerShadowVisible: false,
+            }}
+          />
+
+          <Stack.Screen
+            name="Payment"
+            component={PaymentScreen}
+            options={{
+              headerShown: false,
+              headerShadowVisible: false,
+            }}
           />
 
           <Stack.Screen
@@ -213,7 +227,6 @@ export default function App() {
               title: 'Ticket Verification',
               headerShown: true,
               headerShadowVisible: false,
-
             }}
 
           />

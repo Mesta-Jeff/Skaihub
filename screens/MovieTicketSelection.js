@@ -1,18 +1,21 @@
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, Image, Dimensions, ScrollView, TouchableOpacity, Alert } from 'react-native';
+import React, { useState, useEffect} from 'react';
+import { StyleSheet, Text, View, Image, Dimensions, ScrollView, TouchableOpacity, Alert, ImageBackground,  } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { StatusBar } from 'expo-status-bar';
-import Colors from '../constants/Colors';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { LinearGradient } from 'expo-linear-gradient';
 import { ActivityIndicator } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import { BASE_URL } from '../constants/Var';
 import Loader from '../components/Loader';
+import Colors from '../constants/Colors';
 
 export const SLIDER_WIDTH = Dimensions.get('window').width + 80;
 export const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 0.80);
+export const HEADER_HEIGHT = 300;
 
 export default function MovieTicketSelection({ navigation, route }) {
-  const { ticket_title, title, id, ticket_id, description, price, total, remaining, created_at, seat } = route.params;
+  const { ticket_title, title, id, ticket_id, description, price, seat,image, kind } = route.params;
   const [availableSeats, setAvailableSeats] = useState([]);
   const [loading, setLoading] = useState(true);
   const [pageloading, setPageLoading] = useState(false);
@@ -116,7 +119,17 @@ export default function MovieTicketSelection({ navigation, route }) {
 
         if (response.ok) {
           const responseJson = await response.json();
-          Alert.alert('Reservation Confirmation', responseJson.message + ' And Ticket Number: ' + responseJson.ticket_number);
+          Alert.alert('Reservation Confirmation', responseJson.message);
+          navigation.navigate('PaymentInitialization', {
+            title: title,
+            id: id,
+            ticket_title: ticket_title,
+            ticket_id: ticket_id,
+            description: description,
+            price: price,
+            seat: seatSelected,
+            kind: kind
+        });
           // console.log('Response Data:', responseJson.message + ' Ticket Number: ' + responseJson.ticket_number);
         } else {
           const errorResponse = await response.json();
@@ -131,6 +144,12 @@ export default function MovieTicketSelection({ navigation, route }) {
     }
   };
 
+  // Going back to the previous page
+  const goPrevious = () => {
+    navigation.goBack();
+  }
+
+
   if (loading) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -141,13 +160,34 @@ export default function MovieTicketSelection({ navigation, route }) {
 
   return (
     <SafeAreaProvider style={styles.container}>
-      <StatusBar style="auto" />
       <Loader loading={pageloading} />
 
-      <View>
+      <ImageBackground source={{ uri: image }} style={styles.backgroundImage} >
+        <LinearGradient colors={[Colors.defaultTransparent, Colors.defaultPinkTransparent, Colors.defaultColor]} style={styles.gradient} >
+
+          <TouchableOpacity style={styles.buttonButton} onPress={goPrevious}>
+            <FontAwesome size={20} name="angle-left" color={Colors.defaultWhite} />
+            <Text allowFontScaling={false} style={styles.buttonText}>{'Go Back'}</Text>
+          </TouchableOpacity>
+
+          <View style={styles.profileTopTextHolder}>
+            <Text style={styles.headerTtitle} allowFontScaling={false} numberOfLines={1} ellipsizeMode="tail">{title || '...'}</Text>
+            <Text style={{ color: Colors.defaultWhite, fontWeight: '700', opacity: 0.7, fontSize: 12, }} allowFontScaling={false} numberOfLines={3} ellipsizeMode="tail">{description != null ? description : '--'}</Text>
+          </View>
+        </LinearGradient>
+        
+      </ImageBackground>
+
+      <View style={{marginTop: -50,}}>
         <Image source={require('../assets/img6.png')} style={styles.headerImage} />
+        </View>
+      <View style={{marginTop: -190, marginHorizontal: 5}}>
+        <Text allowFontScaling={false} style={{color: Colors.defaultSelected, marginTop: 5}}>
+          Just a click on the available seat you want to reserve and continue the reservation...
+        </Text>
       </View>
 
+      <View style={{ backgroundColor: Colors.defaultWhite, height: 2, width: '100%', marginTop: 10 }}></View>
       <ScrollView contentContainerStyle={styles.floatingHolder}>
         {availableSeats.map((seatNumber) => {
           const isReserved = reservedSeatsData.includes(seatNumber.toString());
@@ -268,7 +308,53 @@ const styles = StyleSheet.create({
     marginLeft: 5,
     fontSize: 12,
     fontWeight: '700',
-  }
+  },
+  backgroundImage: {
+    width: '100%',
+    height: HEADER_HEIGHT,
+    justifyContent: 'center',
+    alignItems: 'center',
+    resizeMode: 'center'
+  },
+
+  gradient: {
+    width: '100%',
+    height: '100%',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+  },
+
+  profileTopTextHolder: {
+    marginBottom: 60,
+    justifyContent: 'center',
+    alignItems: 'stretch',
+    marginLeft: 10,
+    marginRight: 10,
+  },
+  headerTtitle: {
+    fontSize: 20,
+    color: Colors.defaultWhite,
+    fontFamily: 'MontserratBlack',
+    textTransform: 'uppercase'
+  },
+  buttonButton: {
+    flexDirection: 'row',
+    paddingVertical: 8,
+    marginBottom: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 5,
+    width: 100,
+    borderColor: Colors.defaultWhite,
+    borderWidth: 2
+  },
+
+  buttonText: {
+    color: Colors.defaultWhite,
+    fontSize: 13,
+    fontFamily: 'OpenSansBold',
+    marginLeft: 10,
+  },
 
 
 });

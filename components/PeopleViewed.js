@@ -42,14 +42,14 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         width: 185,
-        height: 185,
+        height: 181,
         borderColor: Colors.defaultColor,
         borderWidth: 2
     },
 
     cardImage: {
         width: 165,
-        height: 165,
+        height: 160,
         borderRadius: 20,
         resizeMode: 'contain'
     },
@@ -60,8 +60,8 @@ const styles = StyleSheet.create({
     },
     readMore: {
         fontWeight: 'bold',
-        fontSize: 13,
-        marginTop: -2,
+        fontSize: 15,
+        marginTop: 3,
         marginBottom: 10,
         color: Colors.defaultColorLight
 

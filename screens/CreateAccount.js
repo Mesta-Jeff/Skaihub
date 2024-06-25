@@ -100,10 +100,6 @@ export default function CreateAccount({ navigation }) {
         makeApiRequest();
     };
 
-    const handleLoader = () => {
-        setLoading(true);
-    }
-
     // Making Api Call
     const makeApiRequest = async () => {
         const url = `${BASE_URL}/users/mobile/createaccount`;
@@ -187,7 +183,7 @@ export default function CreateAccount({ navigation }) {
         }
 
     };
-    
+
 
     // Validating password
     const [showError, setShowError] = useState(false);
@@ -225,34 +221,24 @@ export default function CreateAccount({ navigation }) {
                                         Create Account
                                     </Text>
 
-                                    <Text style={{color:Colors.defaultSilver, fontStyle: 'italic'}}>
+                                    {/* <Text style={{color:Colors.defaultSilver, fontStyle: 'italic'}}>
                                         Provide us with your fullname in S-O-F
-                                    </Text>
+                                    </Text> */}
                                     <TextInput
-                                        style={styles.input}
-                                        placeholder="eg. Nana Ayisi Solomon Jeff"
-                                        value={name}
-                                        onChangeText={(text) => setName(text)}
+                                        style={styles.input}  placeholder="Fullname (eg. Nana Ayisi Solomon Jeff)" value={name} onChangeText={(text) => setName(text)}
                                     />
-                                    <Text style={{color:Colors.defaultSilver, fontStyle: 'italic'}}>
+                                    {/* <Text style={{color:Colors.defaultSilver, fontStyle: 'italic'}}>
                                         15 characters long how do you want be addressed...?
-                                    </Text>
+                                    </Text> */}
                                     <TextInput
-                                        style={styles.input}
-                                        placeholder="eg. Messta-Jeff"
-                                        value={nickname}
-                                        maxLength={15}
-                                        onChangeText={(text) => setNickname(text)}
+                                        style={styles.input} placeholder="Identify me by (eg. Messta-Jeff)" value={nickname} maxLength={15} onChangeText={(text) => setNickname(text)}
                                     />
-                                    <Text style={{color:Colors.defaultSilver, fontStyle: 'italic'}}>
+                                    {/* <Text style={{color:Colors.defaultSilver, fontStyle: 'italic'}}>
                                         This email address should be valid and active
-                                    </Text>
+                                    </Text> */}
                                     <TextInput
                                         style={styles.input}
-                                        placeholder="eg. jeff@gmail.com or me@company.com"
-                                        keyboardType='email-address'
-                                        value={email}
-                                        onChangeText={(text) => setEmail(text)}
+                                        placeholder="Email (eg. jeff@gmail.com)" keyboardType='email-address' value={email} onChangeText={(text) => setEmail(text)}
                                     />
                                     
                                     <TouchableOpacity style={[styles.buttonStyles, { marginBottom: 10, backgroundColor: Colors.defaultWhite, width: ITEM_WIDTH }]} onPress={showDatePicker} disabled={loading}>
@@ -267,12 +253,12 @@ export default function CreateAccount({ navigation }) {
                                         maximumDate={maxDate}
                                     />
 
-                                    <Text style={{color:Colors.defaultSilver, fontStyle: 'italic'}}>
+                                    {/* <Text style={{color:Colors.defaultSilver, fontStyle: 'italic'}}>
                                         You will use this phone to get most of your verifications, it should be ready to receive calls and messages
-                                    </Text>
+                                    </Text> */}
                                     <TextInput
                                         style={styles.input}
-                                        placeholder="eg. 0245482029"
+                                        placeholder="Phone (eg. 0245482029)"
                                         keyboardType='number-pad'
                                         maxLength={10}
                                         value={phone}
@@ -329,9 +315,9 @@ export default function CreateAccount({ navigation }) {
                                         <Text allowFontScaling={false} style={styles.buttonText}>{loading ? 'Please wait...' : 'Sign Up'}</Text>
                                     </TouchableOpacity>
 
-                                    <TouchableOpacity style={styles.buttonStyles} onPress={handleLoader}>
+                                    {/* <TouchableOpacity style={styles.buttonStyles} onPress={handleLoader}>
                                         <Text allowFontScaling={false} style={styles.buttonText}>{loading ? 'Please wait...' : 'Check Loader'}</Text>
-                                    </TouchableOpacity>
+                                    </TouchableOpacity> */}
 
                                     <View style={{ flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center', marginTop: 30, opacity: 0.5 }}>
                                         <View style={{ flexDirection: 'column' }}>

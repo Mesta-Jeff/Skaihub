@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { SafeAreaView, StyleSheet, Text, View, TouchableOpacity, ScrollView } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import CarouselCards from '../components/EntranceCarouselCards';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import Loader from '../components/Loader';
 
 import Colors from '../constants/Colors';
 import { APP_NAME } from '../constants/Var';
@@ -10,9 +11,30 @@ import { ITEM_WIDTH } from './Login';
 
 export default function Entrance({ navigation }) {
 
+  const [pageloading, setPageLoading] = useState(false);
+
+  // Now we are initializing pament
+  const handleNavigation = async (screen) => {
+    try {
+      setPageLoading(true);
+      const userData = await AsyncStorage.getItem('user');
+      if (userData !== null) {
+        navigation.navigate(screen);
+      } else {
+        navigation.navigate('Login');
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setPageLoading(false);
+    }
+  };
+
 
   return (
     <SafeAreaView style={styles.container}>
+      <Loader loading={pageloading} />
+
       <ScrollView contentContainerStyle={{ flexGrow: 1 ,width:ITEM_WIDTH}}>
       <View style={styles.flatContainersWrapper}>
         <View style={styles.flatcontainer1}>
@@ -33,7 +55,7 @@ export default function Entrance({ navigation }) {
               <Text allowFontScaling={false} style={styles.skipbuttonText}>Connect to Explore</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={[styles.gridItem, styles.leftColor]} onPress={() => navigation.navigate('Login')}>
+            <TouchableOpacity style={[styles.gridItem, styles.leftColor]} onPress={() => navigation.navigate('Entrance')}>
               <FontAwesome style={styles.icos} size={28} name="calendar" />
               <Text allowFontScaling={false} style={styles.skipbuttonText}>Live Events</Text>
             </TouchableOpacity>
@@ -41,12 +63,12 @@ export default function Entrance({ navigation }) {
 
           <View style={styles.gridRow}>
             {/* Second row */}
-            <TouchableOpacity style={[styles.gridItem, styles.rightColor]} onPress={() => navigation.navigate('Home')}>
+            <TouchableOpacity style={[styles.gridItem, styles.rightColor]} onPress={() => handleNavigation('Home')}>
               <FontAwesome style={styles.icos} size={28} name="ticket" />
               <Text allowFontScaling={false} style={styles.skipbuttonText}>Buy A Ticket</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={[styles.gridItem, styles.leftColor]} onPress={() => navigation.navigate('Login')}>
+            <TouchableOpacity style={[styles.gridItem, styles.leftColor]} onPress={() => handleNavigation('Home')}>
               <FontAwesome style={styles.icos} size={28} name="folder-open" />
               <Text allowFontScaling={false} style={styles.skipbuttonText}>Create an Event</Text>
             </TouchableOpacity>

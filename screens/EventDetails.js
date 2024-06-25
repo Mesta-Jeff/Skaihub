@@ -263,7 +263,7 @@ export default function EventDetails({ route, navigation }) {
     setPageLoading(true);
     try {
       await AsyncStorage.getItem('user');
-      navigation.navigate('GeneralTicketPreview', { title: title, id: id, kind: e.event_type });
+      navigation.navigate('GeneralTicketPreview', { title: title, id: id, kind: e.event_type, image:e.small_image });
     } finally {
       setPageLoading(false);
     }

@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, StyleSheet, Text, Dimensions, TouchableOpacity } from 'react-native';
+import React, { useState, } from 'react';
+import { View, StyleSheet, Text, Dimensions, TouchableOpacity,Alert } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Divider, } from 'react-native-paper';
 
@@ -10,17 +10,24 @@ export const SLIDER_WIDTH = Dimensions.get('window').width + 80;
 export const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 0.80);
 
 const TicketTemplate = ({ item, index, onPress }) => {
-    const { description, id, price,total,title,remaining, created_at,seat } = item;
-  
+
+    const [showDetails, setShowDetails] = useState(false);
+
+    const { description, id, price,total,title,remaining, start_date,seat } = item;
     const priceNum = parseFloat(total);
     const remainingNum = parseFloat(remaining);
     const sold = priceNum - remainingNum;
 
-    // Parse the created_at timestamp
-    const parsedDate = new Date(created_at);
+    // Parse the start_date timestamp
+    const parsedDate = new Date(start_date);
 
     // Format the date to "MMM DD, YYYY | hh:mm AM/PM" format
     const formattedDate = `${parsedDate.toLocaleString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })}`;
+
+    // reading more detailes
+    const toggleDetails = () => {
+        setShowDetails(!showDetails);
+    };
 
     return (
         <View style={styles.mainBackground}>
@@ -38,32 +45,38 @@ const TicketTemplate = ({ item, index, onPress }) => {
                         
                     </Text>
                     <Divider style={{ marginBottom: 5, }} />
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                        <View style={{ alignItems: 'center', }}>
-                            <Text style={styles.cardCom} allowFontScaling={false}>Total Tickets</Text>
-                            <Text style={styles.cardDescriptions} allowFontScaling={false} numberOfLines={1} ellipsizeMode="tail">{total}</Text>
+                    <TouchableOpacity onPress={toggleDetails}>
+                        <Text style={[styles.readMore, { marginLeft: 90 }]} allowFontScaling={false}> {showDetails ? 'Show less' : 'Show more details...'} </Text>
+                    </TouchableOpacity>
+                    {showDetails && (
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between',marginLeft: -10 }}>
+                            <View style={{ alignItems: 'center' }}>
+                                <Text style={styles.cardCom} allowFontScaling={false}>Total Tickets</Text>
+                                <Text style={styles.cardDescriptions} allowFontScaling={false} numberOfLines={1} ellipsizeMode="tail">{total}</Text>
+                            </View>
+                            <View style={{ alignItems: 'center' }}>
+                                <Text style={styles.cardCom} allowFontScaling={false}>Tickets Sold</Text>
+                                <Text style={styles.cardDescriptions} allowFontScaling={false} numberOfLines={1} ellipsizeMode="tail">{sold}</Text>
+                            </View>
+                            <View style={{ alignItems: 'center' }}>
+                                <Text style={styles.cardCom} allowFontScaling={false}>Ticket Left</Text>
+                                <Text style={styles.cardDescriptions} allowFontScaling={false} numberOfLines={1} ellipsizeMode="tail">{remaining}</Text>
+                            </View>
+                            <View style={{ alignItems: 'center' }}>
+                                <Text style={styles.cardCom} allowFontScaling={false}>Date</Text>
+                                <Text style={styles.cardDescriptions} allowFontScaling={false} numberOfLines={1} ellipsizeMode="tail">{formattedDate}</Text>
+                            </View>
                         </View>
-                        <View style={{ alignItems: 'center', }}>
-                            <Text style={styles.cardCom} allowFontScaling={false}>Tickets Sold</Text>
-                            <Text style={styles.cardDescriptions} allowFontScaling={false} numberOfLines={1} ellipsizeMode="tail">{sold}</Text>
-                        </View>
-                        <View style={{ alignItems: 'center', }}>
-                            <Text style={styles.cardCom} allowFontScaling={false}>Ticket Left</Text>
-                            <Text style={styles.cardDescriptions} allowFontScaling={false} numberOfLines={1} ellipsizeMode="tail">{remaining}</Text>
-                        </View>
-                        <View style={{ alignItems: 'center', }}>
-                            <Text style={styles.cardCom} allowFontScaling={false}>Date</Text>
-                            <Text style={styles.cardDescriptions} allowFontScaling={false} numberOfLines={1} ellipsizeMode="tail">{formattedDate}</Text>
-                        </View>
-                    </View>
+                    )}
+                    
                     <Divider style={{ marginBottom: 5, }} />
-                    <View style={{ alignItems: 'center', }}>
-                        <Text style={styles.cardCom} allowFontScaling={false}>Price per Ticket</Text>
+                    <View style={{ alignItems: 'center',flexDirection: 'row', }}>
+                        <Text style={styles.cardCom} allowFontScaling={false}>Per ticket is</Text>
                         <Text style={styles.price} allowFontScaling={false} numberOfLines={1} ellipsizeMode="tail">GHS{price}</Text>
                     </View>
                     <Divider style={{ marginBottom: 5, }} />
                     <View style={styles.eventReport}>
-                        <TouchableOpacity onPress={() => onPress({description,ticket_id: id, price,total,ticket_title: title,remaining,created_at:formattedDate, seat})}>
+                        <TouchableOpacity onPress={() => onPress({description,ticket_id: id, price,total,ticket_title: title,remaining,seat})}>
                             <Text style={styles.readMore} allowFontScaling={false}>Click To Buy This Ticket</Text>
                         </TouchableOpacity>
                     </View>
@@ -144,8 +157,9 @@ const styles = StyleSheet.create({
         color: Colors.defaultGrey,
         fontSize: 14,
         marginBottom: -2,
-        marginRight: 7,
+        marginRight: 15,
         fontFamily: 'SourceSans3Regular',
+        marginLeft: 10
     },
 
     cardComment: {

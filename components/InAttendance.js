@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
     readMore: {
         fontWeight: 'bold',
         fontSize: 13,
-        marginTop: -2,
+        marginTop: 2,
         marginBottom: 10,
         color: Colors.defaultColorLight
 

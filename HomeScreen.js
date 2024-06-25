@@ -52,7 +52,7 @@ const HomeScreen = ({ navigation }) => {
 
       <Tab.Navigator
 
-        initialRouteName="Events"
+        initialRouteName="Dashboard"
         screenOptions={{
           tabBarActiveTintColor: Colors.defaultColor,
           tabBarInactiveTintColor: 'silver',
@@ -99,8 +99,6 @@ const HomeScreen = ({ navigation }) => {
             tabBarIcon: ({ color }) => <FontAwesome size={20} name="dashboard" color={color} />,
           })}
         />
-
-
 
         {
           role && role !== 'Private' ? (
