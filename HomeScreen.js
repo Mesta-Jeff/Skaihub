@@ -60,16 +60,16 @@ const HomeScreen = ({ navigation }) => {
           headerTitleAllowFontScaling: false,
           tabBarStyle: {
             backgroundColor: Colors.defaultWhite,
-            height: 60,
+            height: 45,
           },
           tabBarLabelStyle: {
             fontWeight: 'bold',
             elevation: 0,
-            fontSize: 12,
+            fontSize: 10,
             marginBottom: 5,
           },
           tabBarIconStyle: {
-            marginTop: 5,
+            marginTop: 3,
           },
         }}
       >
@@ -147,12 +147,12 @@ const HomeScreen = ({ navigation }) => {
             headerShadowVisible: false,
             headerTitleStyle: {
               fontWeight: 'bold',
-              fontSize: 20,
+              fontSize: 16,
               color: Colors.defaultColor,
             },
             headerTitleAlign: 'center',
             headerShown: false,
-            tabBarIcon: ({ color }) => <FontAwesome size={20} name="briefcase" color={color} />,
+            tabBarIcon: ({ color }) => <FontAwesome size={18} name="briefcase" color={color} />,
           }} />
 
       </Tab.Navigator>
@@ -190,8 +190,8 @@ const styles = StyleSheet.create({
   },
 
   profileImage: {
-    width: 70,
-    height: 70,
+    width: 50,
+    height: 50,
     borderRadius: 50,
     borderWidth: 3,
     borderColor: Colors.defaultWhite,

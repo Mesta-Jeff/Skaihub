@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { StyleSheet, Text, View, ImageBackground, ScrollView, Image, TouchableOpacity, Alert } from 'react-native';
+import { StyleSheet, Text, View, ImageBackground, ScrollView, Image, TouchableOpacity, Alert, Dimensions } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { LinearGradient } from 'expo-linear-gradient';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
@@ -12,6 +12,9 @@ import { APP_NAME, BASE_URL } from '../constants/Var';
 import Colors from '../constants/Colors';
 import Loader from '../components/Loader';
 
+export const SLIDER_WIDTH = Dimensions.get('window').width + 80;
+export const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 0.80);
+
 export default function Profile({ navigation }) {
 
 
@@ -19,6 +22,9 @@ export default function Profile({ navigation }) {
   const [userImage, setUserImage] = useState(null);
   const [nickname, setUserNick] = useState(null);
   const [Name, setUserName] = useState(null);
+   const [showControls, setShowControls] = useState(false);
+  const [showUseful, setShowUseful] = useState(false);
+
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -64,6 +70,11 @@ export default function Profile({ navigation }) {
     );
   };
 
+  // reading more detailes
+  const toggleVisibility = (setState) => {
+    setState((prevState) => !prevState);
+  };
+
   return (
     <View style={styles.container}>
       <Loader loading={pageloading} />
@@ -97,15 +108,15 @@ export default function Profile({ navigation }) {
           <View style={styles.eventReport}>
             <View style={styles.eventItem}>
               <Text style={{ color: Colors.defaultSilver, fontSize: 14, fontWeight: '500' }} allowFontScaling={false}>Event Viewed</Text>
-              <Text style={{ fontFamily: 'OpenSansExtraBold', fontSize: 24 }} allowFontScaling={false}>28</Text>
+              <Text style={{ fontFamily: 'OpenSansExtraBold', fontSize: 24 }} allowFontScaling={false}>--</Text>
             </View>
             <View style={styles.eventItem}>
-              <Text style={{ color: Colors.defaultSilver, fontSize: 14, fontWeight: '500' }} allowFontScaling={false}>Event Comments</Text>
-              <Text style={{ fontFamily: 'OpenSansExtraBold', fontSize: 24 }} allowFontScaling={false}>28</Text>
+              <Text style={{ color: Colors.defaultSilver, fontSize: 14, fontWeight: '500' }} allowFontScaling={false}>Comments</Text>
+              <Text style={{ fontFamily: 'OpenSansExtraBold', fontSize: 24 }} allowFontScaling={false}>--</Text>
             </View>
             <View style={styles.eventItem}>
               <Text style={{ color: Colors.defaultSilver, fontSize: 14, fontWeight: '500' }} allowFontScaling={false}>Ticket Bought</Text>
-              <Text style={{ fontFamily: 'OpenSansExtraBold', fontSize: 24 }} allowFontScaling={false}>28</Text>
+              <Text style={{ fontFamily: 'OpenSansExtraBold', fontSize: 24 }} allowFontScaling={false}>--</Text>
             </View>
           </View>
           <Divider style={styles.divider} />
@@ -150,93 +161,101 @@ export default function Profile({ navigation }) {
 
           </View>
 
-          <Text style={styles.subHeader}>Control View </Text>
+          
+          <TouchableOpacity onPress={() => toggleVisibility(setShowControls)}>
+             <Text style={styles.subHeader}>{showControls ? 'Show less' : 'Show more view controls...'}</Text>
+          </TouchableOpacity>
           <Divider style={styles.divider} />
-          <View style={styles.rtContainer}>
+          {showControls && (
+           
+            <View style={styles.rtContainer}>
+  
+              <View style={styles.cvContainerItem}>
+                <View style={styles.cvContainerInner1}>
+                  <FontAwesome style={{ marginTop: 2 }} size={20} name="lock" color={Colors.defaultWhite} />
+                  <Text style={{ fontFamily: 'OpenSansExtraBold', fontSize: 20, marginLeft: 10, color: Colors.defaultWhite }} allowFontScaling={false}>Change Password</Text>
+                </View>
+                <View style={styles.cvContainerInner2}>
+                  <Text style={{ marginHorizontal: 10, marginVertical: 6, fontFamily: 'OpenSansExtraBold', }} allowFontScaling={false}>Click here to perform action</Text>
+                  <Divider />
+                </View>
+              </View>
+              <View style={styles.cvContainerItem}>
+                <View style={styles.cvContainerInner1}>
+                  <FontAwesome style={{ marginTop: 2 }} size={20} name="phone" color={Colors.defaultWhite} />
+                  <Text numberOfLines={1} ellipsizeMode="tail" style={{ fontFamily: 'OpenSansExtraBold', fontSize: 20, marginLeft: 10, color: Colors.defaultWhite }} allowFontScaling={false}>Request for Number Change</Text>
+                </View>
+                <View style={styles.cvContainerInner2}>
+                  <Text style={{ marginHorizontal: 10, marginVertical: 6, fontFamily: 'OpenSansExtraBold', }} allowFontScaling={false}>Click here to perform action</Text>
+                  <Divider />
+                </View>
+              </View>
+              <View style={styles.cvContainerItem}>
+                <View style={styles.cvContainerInner1}>
+                  <FontAwesome style={{ marginTop: 2 }} size={20} name="sitemap" color={Colors.defaultWhite} />
+                  <Text style={{ fontFamily: 'OpenSansExtraBold', fontSize: 20, marginLeft: 10, color: Colors.defaultWhite }} allowFontScaling={false}>Device Permissions</Text>
+                </View>
+                <View style={styles.cvContainerInner2}>
+                  <Text style={{ marginHorizontal: 10, marginVertical: 6, fontFamily: 'OpenSansExtraBold', }} allowFontScaling={false}>Click here to perform action</Text>
+                  <Divider />
+                </View>
+              </View>
+              <View style={styles.cvContainerItem}>
+                <View style={styles.cvContainerInner1}>
+                  <FontAwesome style={{ marginTop: 2 }} size={20} name="code" color={Colors.defaultWhite} />
+                  <Text style={{ fontFamily: 'OpenSansExtraBold', fontSize: 20, marginLeft: 10, color: Colors.defaultWhite }} allowFontScaling={false}>Check for Update</Text>
+                </View>
+                <View style={styles.cvContainerInner2}>
+                  <Text style={{ marginHorizontal: 10, marginVertical: 6, fontFamily: 'OpenSansExtraBold', }} allowFontScaling={false}>Click here to perform action</Text>
+                  <Divider />
+                </View>
+              </View>
+  
+            </View>
 
-            <View style={styles.cvContainerItem}>
-              <View style={styles.cvContainerInner1}>
-                <FontAwesome style={{ marginTop: 2 }} size={20} name="lock" color={Colors.defaultWhite} />
-                <Text style={{ fontFamily: 'OpenSansExtraBold', fontSize: 20, marginLeft: 10, color: Colors.defaultWhite }} allowFontScaling={false}>Change Password</Text>
-              </View>
-              <View style={styles.cvContainerInner2}>
-                <Text style={{ marginHorizontal: 10, marginVertical: 6, fontFamily: 'OpenSansExtraBold', }} allowFontScaling={false}>Click here to perform action</Text>
-                <Divider />
-              </View>
-            </View>
-            <View style={styles.cvContainerItem}>
-              <View style={styles.cvContainerInner1}>
-                <FontAwesome style={{ marginTop: 2 }} size={20} name="phone" color={Colors.defaultWhite} />
-                <Text numberOfLines={1} ellipsizeMode="tail" style={{ fontFamily: 'OpenSansExtraBold', fontSize: 20, marginLeft: 10, color: Colors.defaultWhite }} allowFontScaling={false}>Request for Number Change</Text>
-              </View>
-              <View style={styles.cvContainerInner2}>
-                <Text style={{ marginHorizontal: 10, marginVertical: 6, fontFamily: 'OpenSansExtraBold', }} allowFontScaling={false}>Click here to perform action</Text>
-                <Divider />
-              </View>
-            </View>
-            <View style={styles.cvContainerItem}>
-              <View style={styles.cvContainerInner1}>
-                <FontAwesome style={{ marginTop: 2 }} size={20} name="sitemap" color={Colors.defaultWhite} />
-                <Text style={{ fontFamily: 'OpenSansExtraBold', fontSize: 20, marginLeft: 10, color: Colors.defaultWhite }} allowFontScaling={false}>Device Permissions</Text>
-              </View>
-              <View style={styles.cvContainerInner2}>
-                <Text style={{ marginHorizontal: 10, marginVertical: 6, fontFamily: 'OpenSansExtraBold', }} allowFontScaling={false}>Click here to perform action</Text>
-                <Divider />
-              </View>
-            </View>
-            <View style={styles.cvContainerItem}>
-              <View style={styles.cvContainerInner1}>
-                <FontAwesome style={{ marginTop: 2 }} size={20} name="code" color={Colors.defaultWhite} />
-                <Text style={{ fontFamily: 'OpenSansExtraBold', fontSize: 20, marginLeft: 10, color: Colors.defaultWhite }} allowFontScaling={false}>Check for Update</Text>
-              </View>
-              <View style={styles.cvContainerInner2}>
-                <Text style={{ marginHorizontal: 10, marginVertical: 6, fontFamily: 'OpenSansExtraBold', }} allowFontScaling={false}>Click here to perform action</Text>
-                <Divider />
-              </View>
-            </View>
+          )}     
 
-          </View>
-
-          <Text style={styles.subHeader}>Useful Information </Text>
+          <TouchableOpacity onPress={() => toggleVisibility(setShowUseful)}>
+             <Text style={styles.subHeader}>{showUseful ? 'Show less' : 'Show more useful information...'}</Text>
+          </TouchableOpacity>
           <Divider style={styles.divider} />
-          <View style={styles.rtContainer}>
+          {showUseful && (
 
-            <View style={styles.infoContainer}>
-              <View style={styles.infoContainerItem}>
-                <FontAwesome style={{ marginTop: 2 }} size={20} name="info" color={Colors.defaultGrey} />
-                <Text style={{ fontFamily: 'OpenSansBold', fontSize: 20, color: Colors.defaultGrey, }} allowFontScaling={false}>Know About {APP_NAME}</Text>
-                <FontAwesome style={{ marginTop: 2 }} size={20} name="angle-right" color={Colors.defaultColor} />
+            <View style={styles.rtContainer}>
+              <View style={styles.infoContainer}>
+                <View style={styles.infoContainerItem}>
+                  <FontAwesome style={{ marginTop: 2 }} size={20} name="info" color={Colors.defaultGrey} />
+                  <Text style={{ fontFamily: 'OpenSansBold', fontSize: 20, color: Colors.defaultGrey, }} allowFontScaling={false}>Know About {APP_NAME}</Text>
+                  <FontAwesome style={{ marginTop: 2 }} size={20} name="angle-right" color={Colors.defaultColor} />
+                </View>
               </View>
-            </View>
-            <View style={styles.infoContainer}>
-              <View style={styles.infoContainerItem}>
-                <FontAwesome style={{ marginTop: 2 }} size={20} name="exchange" color={Colors.defaultGrey} />
-                <Text style={{ fontFamily: 'OpenSansBold', fontSize: 20, color: Colors.defaultGrey, }} allowFontScaling={false}>App Terms of Use</Text>
-                <FontAwesome style={{ marginTop: 2 }} size={20} name="angle-right" color={Colors.defaultColor} />
+              <View style={styles.infoContainer}>
+                <View style={styles.infoContainerItem}>
+                  <FontAwesome style={{ marginTop: 2 }} size={20} name="exchange" color={Colors.defaultGrey} />
+                  <Text style={{ fontFamily: 'OpenSansBold', fontSize: 20, color: Colors.defaultGrey, }} allowFontScaling={false}>App Terms of Use</Text>
+                  <FontAwesome style={{ marginTop: 2 }} size={20} name="angle-right" color={Colors.defaultColor} />
+                </View>
               </View>
-            </View>
-            <View style={styles.infoContainer}>
-              <View style={styles.infoContainerItem}>
-                <FontAwesome style={{ marginTop: 2 }} size={20} name="eye" color={Colors.defaultGrey} />
-                <Text style={{ fontFamily: 'OpenSansBold', fontSize: 20, color: Colors.defaultGrey, }} allowFontScaling={false}>Privacy Policies</Text>
-                <FontAwesome style={{ marginTop: 2 }} size={20} name="angle-right" color={Colors.defaultColor} />
+              <View style={styles.infoContainer}>
+                <View style={styles.infoContainerItem}>
+                  <FontAwesome style={{ marginTop: 2 }} size={20} name="eye" color={Colors.defaultGrey} />
+                  <Text style={{ fontFamily: 'OpenSansBold', fontSize: 20, color: Colors.defaultGrey, }} allowFontScaling={false}>Privacy Policies</Text>
+                  <FontAwesome style={{ marginTop: 2 }} size={20} name="angle-right" color={Colors.defaultColor} />
+                </View>
               </View>
-            </View>
-            <View style={styles.infoContainer}>
-              <View style={styles.infoContainerItem}>
-                <FontAwesome style={{ marginTop: 2 }} size={20} name="trash" color={Colors.defaultGrey} />
-                <Text style={{ fontFamily: 'OpenSansBold', fontSize: 20, color: Colors.defaultGrey, }} allowFontScaling={false}>Clear Application Data</Text>
-                <FontAwesome style={{ marginTop: 2 }} size={20} name="angle-right" color={Colors.defaultColor} />
+              <View style={styles.infoContainer}>
+                <View style={styles.infoContainerItem}>
+                  <FontAwesome style={{ marginTop: 2 }} size={20} name="trash" color={Colors.defaultGrey} />
+                  <Text style={{ fontFamily: 'OpenSansBold', fontSize: 20, color: Colors.defaultGrey, }} allowFontScaling={false}>Clear Application Data</Text>
+                  <FontAwesome style={{ marginTop: 2 }} size={20} name="angle-right" color={Colors.defaultColor} />
+                </View>
               </View>
+
             </View>
 
-          </View>
+          )}
+         
 
-          <Text style={styles.subHeader}>Report on Events </Text>
-          <Divider style={styles.divider} />
-          <Text>Main container
-            Praesent convallis, urna non mollis facilisis, mi orci facilisis lacus, et fermentum enim sem non massa. Duis sed semper neque. Ut placerat quam non neque
-          </Text>
           <Divider style={styles.divider} />
 
           <TouchableOpacity style={styles.buttonStyles} onPress={logoutUser}>
@@ -319,7 +338,8 @@ const styles = StyleSheet.create({
     fontFamily: 'OpenSansBold',
     marginBottom: -6,
     fontSize: 16,
-    letterSpacing: 3
+    letterSpacing: 0,
+    color: Colors.defaultColorLight,
   },
 
   divider: {
@@ -336,7 +356,8 @@ const styles = StyleSheet.create({
   },
 
   rtContainer: {
-    marginBottom: 40
+    marginBottom: 40,
+    width: ITEM_WIDTH
   },
   complainContainerInner1: {
     flexDirection: 'row',

@@ -68,7 +68,7 @@ export default function App() {
 
       <NavigationContainer>
 
-        <Stack.Navigator initialRouteName="Home"
+        <Stack.Navigator initialRouteName="Landing"
           screenOptions={({ navigation }) => ({
             headerStyle: {
               backgroundColor: Colors.defaultWhite,
